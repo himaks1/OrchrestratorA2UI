@@ -9,7 +9,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "common_types.json#/$defs/ComponentCommon"
+          "$ref": "#/$defs/ComponentCommon"
         },
         {
           "$ref": "#/$defs/CatalogComponentCommon"
@@ -21,17 +21,28 @@
               "const": "Text"
             },
             "text": {
-              "$ref": "common_types.json#/$defs/DynamicString",
+              "$ref": "#/$defs/DynamicString",
               "description": "The text content to display. Supports markdown formatting."
             },
             "variant": {
               "type": "string",
               "description": "A hint for the base text style.",
-              "enum": ["h1", "h2", "h3", "h4", "h5", "caption", "body"],
+              "enum": [
+                "h1",
+                "h2",
+                "h3",
+                "h4",
+                "h5",
+                "caption",
+                "body"
+              ],
               "default": "body"
             }
           },
-          "required": ["component", "text"]
+          "required": [
+            "component",
+            "text"
+          ]
         }
       ],
       "unevaluatedProperties": false
@@ -40,7 +51,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "common_types.json#/$defs/ComponentCommon"
+          "$ref": "#/$defs/ComponentCommon"
         },
         {
           "$ref": "#/$defs/CatalogComponentCommon"
@@ -52,23 +63,39 @@
               "const": "Image"
             },
             "url": {
-              "$ref": "common_types.json#/$defs/DynamicString",
+              "$ref": "#/$defs/DynamicString",
               "description": "The URL of the image to display."
             },
             "fit": {
               "type": "string",
               "description": "CSS object-fit property.",
-              "enum": ["contain", "cover", "fill", "none", "scaleDown"],
+              "enum": [
+                "contain",
+                "cover",
+                "fill",
+                "none",
+                "scaleDown"
+              ],
               "default": "fill"
             },
             "variant": {
               "type": "string",
               "description": "A hint for the image size and style.",
-              "enum": ["icon", "avatar", "smallFeature", "mediumFeature", "largeFeature", "header"],
+              "enum": [
+                "icon",
+                "avatar",
+                "smallFeature",
+                "mediumFeature",
+                "largeFeature",
+                "header"
+              ],
               "default": "mediumFeature"
             }
           },
-          "required": ["component", "url"]
+          "required": [
+            "component",
+            "url"
+          ]
         }
       ],
       "unevaluatedProperties": false
@@ -77,7 +104,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "common_types.json#/$defs/ComponentCommon"
+          "$ref": "#/$defs/ComponentCommon"
         },
         {
           "$ref": "#/$defs/CatalogComponentCommon"
@@ -93,7 +120,10 @@
               "type": "string"
             }
           },
-          "required": ["component", "name"]
+          "required": [
+            "component",
+            "name"
+          ]
         }
       ],
       "unevaluatedProperties": false
@@ -102,7 +132,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "common_types.json#/$defs/ComponentCommon"
+          "$ref": "#/$defs/ComponentCommon"
         },
         {
           "$ref": "#/$defs/CatalogComponentCommon"
@@ -115,20 +145,36 @@
               "const": "Row"
             },
             "children": {
-              "$ref": "common_types.json#/$defs/ChildList"
+              "$ref": "#/$defs/ChildList"
             },
             "justify": {
               "type": "string",
-              "enum": ["center", "end", "spaceAround", "spaceBetween", "spaceEvenly", "start", "stretch"],
+              "enum": [
+                "center",
+                "end",
+                "spaceAround",
+                "spaceBetween",
+                "spaceEvenly",
+                "start",
+                "stretch"
+              ],
               "default": "start"
             },
             "align": {
               "type": "string",
-              "enum": ["start", "center", "end", "stretch"],
+              "enum": [
+                "start",
+                "center",
+                "end",
+                "stretch"
+              ],
               "default": "stretch"
             }
           },
-          "required": ["component", "children"]
+          "required": [
+            "component",
+            "children"
+          ]
         }
       ],
       "unevaluatedProperties": false
@@ -137,7 +183,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "common_types.json#/$defs/ComponentCommon"
+          "$ref": "#/$defs/ComponentCommon"
         },
         {
           "$ref": "#/$defs/CatalogComponentCommon"
@@ -150,20 +196,36 @@
               "const": "Column"
             },
             "children": {
-              "$ref": "common_types.json#/$defs/ChildList"
+              "$ref": "#/$defs/ChildList"
             },
             "justify": {
               "type": "string",
-              "enum": ["start", "center", "end", "spaceBetween", "spaceAround", "spaceEvenly", "stretch"],
+              "enum": [
+                "start",
+                "center",
+                "end",
+                "spaceBetween",
+                "spaceAround",
+                "spaceEvenly",
+                "stretch"
+              ],
               "default": "start"
             },
             "align": {
               "type": "string",
-              "enum": ["center", "end", "start", "stretch"],
+              "enum": [
+                "center",
+                "end",
+                "start",
+                "stretch"
+              ],
               "default": "stretch"
             }
           },
-          "required": ["component", "children"]
+          "required": [
+            "component",
+            "children"
+          ]
         }
       ],
       "unevaluatedProperties": false
@@ -172,7 +234,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "common_types.json#/$defs/ComponentCommon"
+          "$ref": "#/$defs/ComponentCommon"
         },
         {
           "$ref": "#/$defs/CatalogComponentCommon"
@@ -184,11 +246,14 @@
               "const": "Card"
             },
             "child": {
-              "$ref": "common_types.json#/$defs/ComponentId",
+              "$ref": "#/$defs/ComponentId",
               "description": "The ID of the child component inside the card."
             }
           },
-          "required": ["component", "child"]
+          "required": [
+            "component",
+            "child"
+          ]
         }
       ],
       "unevaluatedProperties": false
@@ -197,13 +262,13 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "common_types.json#/$defs/ComponentCommon"
+          "$ref": "#/$defs/ComponentCommon"
         },
         {
           "$ref": "#/$defs/CatalogComponentCommon"
         },
         {
-          "$ref": "common_types.json#/$defs/Checkable"
+          "$ref": "#/$defs/Checkable"
         },
         {
           "type": "object",
@@ -212,18 +277,26 @@
               "const": "Button"
             },
             "child": {
-              "$ref": "common_types.json#/$defs/ComponentId"
+              "$ref": "#/$defs/ComponentId"
             },
             "variant": {
               "type": "string",
-              "enum": ["default", "primary", "borderless"],
+              "enum": [
+                "default",
+                "primary",
+                "borderless"
+              ],
               "default": "default"
             },
             "action": {
-              "$ref": "common_types.json#/$defs/Action"
+              "$ref": "#/$defs/Action"
             }
           },
-          "required": ["component", "child", "action"]
+          "required": [
+            "component",
+            "child",
+            "action"
+          ]
         }
       ],
       "unevaluatedProperties": false
@@ -232,7 +305,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "common_types.json#/$defs/ComponentCommon"
+          "$ref": "#/$defs/ComponentCommon"
         },
         {
           "$ref": "#/$defs/CatalogComponentCommon"
@@ -245,11 +318,16 @@
             },
             "axis": {
               "type": "string",
-              "enum": ["horizontal", "vertical"],
+              "enum": [
+                "horizontal",
+                "vertical"
+              ],
               "default": "horizontal"
             }
           },
-          "required": ["component"]
+          "required": [
+            "component"
+          ]
         }
       ],
       "unevaluatedProperties": false
@@ -258,7 +336,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "common_types.json#/$defs/ComponentCommon"
+          "$ref": "#/$defs/ComponentCommon"
         },
         {
           "$ref": "#/$defs/CatalogComponentCommon"
@@ -275,18 +353,24 @@
                 "type": "object",
                 "properties": {
                   "title": {
-                    "$ref": "common_types.json#/$defs/DynamicString"
+                    "$ref": "#/$defs/DynamicString"
                   },
                   "child": {
-                    "$ref": "common_types.json#/$defs/ComponentId"
+                    "$ref": "#/$defs/ComponentId"
                   }
                 },
-                "required": ["title", "child"],
+                "required": [
+                  "title",
+                  "child"
+                ],
                 "additionalProperties": false
               }
             }
           },
-          "required": ["component", "tabs"]
+          "required": [
+            "component",
+            "tabs"
+          ]
         }
       ],
       "unevaluatedProperties": false
@@ -295,7 +379,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "common_types.json#/$defs/ComponentCommon"
+          "$ref": "#/$defs/ComponentCommon"
         },
         {
           "$ref": "#/$defs/CatalogComponentCommon"
@@ -308,7 +392,7 @@
               "const": "DataTable"
             },
             "title": {
-              "$ref": "common_types.json#/$defs/DynamicString",
+              "$ref": "#/$defs/DynamicString",
               "description": "The title or caption of the data table."
             },
             "columns": {
@@ -329,7 +413,7 @@
                   }
                 },
                 {
-                  "$ref": "common_types.json#/$defs/DataBinding"
+                  "$ref": "#/$defs/DataBinding"
                 }
               ]
             },
@@ -349,7 +433,11 @@
               "default": false
             }
           },
-          "required": ["component", "columns", "rows"]
+          "required": [
+            "component",
+            "columns",
+            "rows"
+          ]
         }
       ],
       "unevaluatedProperties": false
@@ -358,7 +446,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "common_types.json#/$defs/ComponentCommon"
+          "$ref": "#/$defs/ComponentCommon"
         },
         {
           "$ref": "#/$defs/CatalogComponentCommon"
@@ -371,7 +459,7 @@
               "const": "DataGrid"
             },
             "title": {
-              "$ref": "common_types.json#/$defs/DynamicString"
+              "$ref": "#/$defs/DynamicString"
             },
             "columns": {
               "type": "array",
@@ -389,7 +477,7 @@
                   }
                 },
                 {
-                  "$ref": "common_types.json#/$defs/DataBinding"
+                  "$ref": "#/$defs/DataBinding"
                 }
               ]
             },
@@ -402,7 +490,11 @@
               "default": true
             }
           },
-          "required": ["component", "columns", "rows"]
+          "required": [
+            "component",
+            "columns",
+            "rows"
+          ]
         }
       ],
       "unevaluatedProperties": false
@@ -411,7 +503,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "common_types.json#/$defs/ComponentCommon"
+          "$ref": "#/$defs/ComponentCommon"
         },
         {
           "$ref": "#/$defs/CatalogComponentCommon"
@@ -426,10 +518,16 @@
             "type": {
               "type": "string",
               "description": "The chart type.",
-              "enum": ["bar", "line", "pie", "doughnut", "area"]
+              "enum": [
+                "bar",
+                "line",
+                "pie",
+                "doughnut",
+                "area"
+              ]
             },
             "title": {
-              "$ref": "common_types.json#/$defs/DynamicString",
+              "$ref": "#/$defs/DynamicString",
               "description": "Chart header title."
             },
             "xAxis": {
@@ -450,12 +548,16 @@
                   }
                 },
                 {
-                  "$ref": "common_types.json#/$defs/DataBinding"
+                  "$ref": "#/$defs/DataBinding"
                 }
               ]
             }
           },
-          "required": ["component", "type", "chartData"]
+          "required": [
+            "component",
+            "type",
+            "chartData"
+          ]
         }
       ],
       "unevaluatedProperties": false
@@ -466,7 +568,7 @@
       "type": "object",
       "properties": {
         "weight": {
-          "$ref": "common_types.json#/$defs/DynamicNumber"
+          "$ref": "#/$defs/DynamicNumber"
         }
       }
     },
@@ -483,7 +585,13 @@
         },
         "type": {
           "type": "string",
-          "enum": ["string", "number", "currency", "date", "boolean"],
+          "enum": [
+            "string",
+            "number",
+            "currency",
+            "date",
+            "boolean"
+          ],
           "default": "string"
         },
         "sortable": {
@@ -495,7 +603,10 @@
           "description": "Optional CSS width hint (e.g. '150px', '20%')."
         }
       },
-      "required": ["key", "label"]
+      "required": [
+        "key",
+        "label"
+      ]
     },
     "AxisConfig": {
       "type": "object",
@@ -532,11 +643,344 @@
                 "type": "number"
               }
             },
-            "required": ["label", "value"]
+            "required": [
+              "label",
+              "value"
+            ]
           }
         }
       },
-      "required": ["label", "value"]
+      "required": [
+        "label",
+        "value"
+      ]
+    },
+    "ComponentId": {
+      "type": "string",
+      "description": "The unique identifier for a component, used for both definitions and references within the same surface."
+    },
+    "AccessibilityAttributes": {
+      "type": "object",
+      "description": "Attributes to enhance accessibility when using assistive technologies like screen readers.",
+      "properties": {
+        "label": {
+          "$ref": "#/$defs/DynamicString",
+          "description": "A short string, typically 1 to 3 words, used by assistive technologies to convey the purpose or intent of an element. For example, an input field might have an accessible label of 'User ID' or a button might be labeled 'Submit'."
+        },
+        "description": {
+          "$ref": "#/$defs/DynamicString",
+          "description": "Additional information provided by assistive technologies about an element such as instructions, format requirements, or result of an action. For example, a mute button might have a label of 'Mute' and a description of 'Silences notifications about this conversation'."
+        }
+      }
+    },
+    "ComponentCommon": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ComponentId"
+        },
+        "accessibility": {
+          "$ref": "#/$defs/AccessibilityAttributes"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "ChildList": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ComponentId"
+          },
+          "description": "A static list of child component IDs."
+        },
+        {
+          "type": "object",
+          "description": "A template for generating a dynamic list of children from a data model list. The `componentId` is the component to use as a template.",
+          "properties": {
+            "componentId": {
+              "$ref": "#/$defs/ComponentId"
+            },
+            "path": {
+              "type": "string",
+              "description": "The path to the list of component property objects in the data model."
+            }
+          },
+          "required": [
+            "componentId",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "DataBinding": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "A JSON Pointer path to a value in the data model."
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "additionalProperties": false
+    },
+    "DynamicValue": {
+      "description": "A value that can be a literal, a path, or a function call returning any type.",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "array"
+        },
+        {
+          "$ref": "#/$defs/DataBinding"
+        },
+        {
+          "$ref": "#/$defs/FunctionCall"
+        }
+      ]
+    },
+    "DynamicString": {
+      "description": "Represents a string",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/$defs/DataBinding"
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/FunctionCall"
+            },
+            {
+              "properties": {
+                "returnType": {
+                  "const": "string"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "DynamicNumber": {
+      "description": "Represents a value that can be either a literal number, a path to a number in the data model, or a function call returning a number.",
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "$ref": "#/$defs/DataBinding"
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/FunctionCall"
+            },
+            {
+              "properties": {
+                "returnType": {
+                  "const": "number"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "DynamicBoolean": {
+      "description": "A boolean value that can be a literal, a path, or a function call returning a boolean.",
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "$ref": "#/$defs/DataBinding"
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/FunctionCall"
+            },
+            {
+              "properties": {
+                "returnType": {
+                  "const": "boolean"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "DynamicStringList": {
+      "description": "Represents a value that can be either a literal array of strings, a path to a string array in the data model, or a function call returning a string array.",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "$ref": "#/$defs/DataBinding"
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/FunctionCall"
+            },
+            {
+              "properties": {
+                "returnType": {
+                  "const": "array"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "FunctionCall": {
+      "type": "object",
+      "description": "Invokes a named function on the client.",
+      "properties": {
+        "call": {
+          "type": "string",
+          "description": "The name of the function to call."
+        },
+        "args": {
+          "type": "object",
+          "description": "Arguments passed to the function.",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/DynamicValue"
+              },
+              {
+                "type": "object",
+                "description": "A literal object argument (e.g. configuration)."
+              }
+            ]
+          }
+        },
+        "returnType": {
+          "type": "string",
+          "description": "The expected return type of the function call.",
+          "enum": [
+            "string",
+            "number",
+            "boolean",
+            "array",
+            "object",
+            "any",
+            "void"
+          ],
+          "default": "boolean"
+        }
+      },
+      "required": [
+        "call"
+      ],
+      "oneOf": [
+        {
+          "$ref": "catalog.json#/$defs/anyFunction"
+        }
+      ]
+    },
+    "CheckRule": {
+      "type": "object",
+      "description": "A single validation rule applied to an input component.",
+      "properties": {
+        "condition": {
+          "$ref": "#/$defs/DynamicBoolean"
+        },
+        "message": {
+          "type": "string",
+          "description": "The error message to display if the check fails."
+        }
+      },
+      "required": [
+        "condition",
+        "message"
+      ],
+      "additionalProperties": false
+    },
+    "Checkable": {
+      "description": "Properties for components that support client-side checks.",
+      "type": "object",
+      "properties": {
+        "checks": {
+          "type": "array",
+          "description": "A list of checks to perform. These are function calls that must return a boolean indicating validity.",
+          "items": {
+            "$ref": "#/$defs/CheckRule"
+          }
+        }
+      }
+    },
+    "Action": {
+      "description": "Defines an interaction handler that can either trigger a server-side event or execute a local client-side function.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Triggers a server-side event.",
+          "properties": {
+            "event": {
+              "type": "object",
+              "description": "The event to dispatch to the server.",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The name of the action to be dispatched to the server."
+                },
+                "context": {
+                  "type": "object",
+                  "description": "A JSON object containing the key-value pairs for the action context. Values can be literals or paths. Use literal values unless the value must be dynamically bound to the data model. Do NOT use paths for static IDs.",
+                  "additionalProperties": {
+                    "$ref": "#/$defs/DynamicValue"
+                  }
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "event"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "Executes a local client-side function.",
+          "properties": {
+            "functionCall": {
+              "$ref": "#/$defs/FunctionCall"
+            }
+          },
+          "required": [
+            "functionCall"
+          ],
+          "additionalProperties": false
+        }
+      ]
     }
   }
 }
