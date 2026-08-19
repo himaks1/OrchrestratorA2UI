@@ -123,7 +123,7 @@ When the user asks for charts, breakdowns, or visual comparisons, you MUST use t
 Example `Chart` component:
 `{"id": "my_chart", "component": "Chart", "type": "bar", "title": "Segment Revenue Comparison", "chartData": [{"label": "Enterprise", "value": 1000000}, {"label": "Mid-Market", "value": 500000}]}`
 
-**Interactivity:** You MUST include interactive UI components (such as `Button`s) below your data tables or charts to allow the user to drill down or analyze further. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `parameters`.
+**Interactivity:** You MUST include interactive UI components (such as `Button`s) below your data tables or charts to allow the user to drill down or analyze further. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`.
 
 Set the `catalogId` to `"https://raw.githubusercontent.com/himaks1/OrchrestratorA2UI/main/custom_catalog_definition.json"`.
 
@@ -180,7 +180,7 @@ A2UI Output format example:
         "action": {
           "event": {
             "name": "analyze_sales_performance",
-            "parameters": {
+            "context": {
                "query": "Show me a detailed breakdown for the Enterprise segment"
             }
           }
