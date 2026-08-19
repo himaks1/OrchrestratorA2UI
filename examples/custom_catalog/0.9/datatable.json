@@ -1,0 +1,108 @@
+[
+  {
+    "version": "v0.9",
+    "createSurface": {
+      "surfaceId": "sales-table-surface",
+      "catalogId": "https://a2ui.org/catalogs/custom/0.9/custom_catalog_definition.json"
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateComponents": {
+      "surfaceId": "sales-table-surface",
+      "components": [
+        {
+          "id": "root",
+          "component": "Card",
+          "child": "content_col"
+        },
+        {
+          "id": "content_col",
+          "component": "Column",
+          "children": ["title", "sales_table", "drill_down_btn"]
+        },
+        {
+          "id": "title",
+          "component": "Text",
+          "text": "### Q3 Performance by Division",
+          "variant": "h3"
+        },
+        {
+          "id": "sales_table",
+          "component": "DataTable",
+          "title": "Division Performance Summary",
+          "pageSize": 5,
+          "sortable": true,
+          "columns": [
+            {
+              "key": "division",
+              "label": "Division",
+              "type": "string"
+            },
+            {
+              "key": "vp_name",
+              "label": "VP Lead",
+              "type": "string"
+            },
+            {
+              "key": "target",
+              "label": "Target Revenue",
+              "type": "currency"
+            },
+            {
+              "key": "actual",
+              "label": "Actual Revenue",
+              "type": "currency"
+            },
+            {
+              "key": "achievement",
+              "label": "Achievement %",
+              "type": "number"
+            }
+          ],
+          "rows": [
+            {
+              "division": "Enterprise Solutions",
+              "vp_name": "Sarah Connor",
+              "target": 5000000,
+              "actual": 5420000,
+              "achievement": 108.4
+            },
+            {
+              "division": "Cloud & AI",
+              "vp_name": "Alex Mercer",
+              "target": 7500000,
+              "actual": 8100000,
+              "achievement": 108.0
+            },
+            {
+              "division": "Commercial Growth",
+              "vp_name": "Jordan Lee",
+              "target": 3200000,
+              "actual": 3050000,
+              "achievement": 95.3
+            }
+          ]
+        },
+        {
+          "id": "drill_down_btn",
+          "component": "Button",
+          "child": "drill_down_btn_txt",
+          "action": {
+            "event": {
+              "name": "analyze_sales_performance",
+              "parameters": {
+                "query": "Show me a detailed breakdown for Cloud & AI"
+              }
+            }
+          }
+        },
+        {
+          "id": "drill_down_btn_txt",
+          "component": "Text",
+          "text": "Analyze Cloud & AI"
+        }
+      ]
+    }
+  }
+]

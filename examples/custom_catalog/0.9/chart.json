@@ -1,0 +1,81 @@
+[
+  {
+    "version": "v0.9",
+    "createSurface": {
+      "surfaceId": "sales-chart-surface",
+      "catalogId": "https://a2ui.org/catalogs/custom/0.9/custom_catalog_definition.json"
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateComponents": {
+      "surfaceId": "sales-chart-surface",
+      "components": [
+        {
+          "id": "root",
+          "component": "Card",
+          "child": "chart_col"
+        },
+        {
+          "id": "chart_col",
+          "component": "Column",
+          "children": ["chart_title", "sales_bar_chart", "details_btn"]
+        },
+        {
+          "id": "chart_title",
+          "component": "Text",
+          "text": "### Revenue by Customer Segment",
+          "variant": "h3"
+        },
+        {
+          "id": "sales_bar_chart",
+          "component": "Chart",
+          "type": "bar",
+          "title": "Segment Revenue Comparison ($M)",
+          "xAxis": {
+            "label": "Segment"
+          },
+          "yAxis": {
+            "label": "Revenue ($M)"
+          },
+          "chartData": [
+            {
+              "label": "Enterprise",
+              "value": 142.5
+            },
+            {
+              "label": "Mid-Market",
+              "value": 85.2
+            },
+            {
+              "label": "SMB",
+              "value": 45.8
+            },
+            {
+              "label": "Public Sector",
+              "value": 31.0
+            }
+          ]
+        },
+        {
+          "id": "details_btn",
+          "component": "Button",
+          "child": "details_btn_txt",
+          "action": {
+            "event": {
+              "name": "analyze_sales_performance",
+              "parameters": {
+                "query": "Show me quarterly growth for Enterprise segment"
+              }
+            }
+          }
+        },
+        {
+          "id": "details_btn_txt",
+          "component": "Text",
+          "text": "View Enterprise Trends"
+        }
+      ]
+    }
+  }
+]

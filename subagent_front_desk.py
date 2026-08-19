@@ -19,7 +19,7 @@ import uvicorn
 from dotenv import load_dotenv
 
 from google.adk.agents.llm_agent import LlmAgent
-from google.adk.models.lite_llm import LiteLlm
+from google.adk.models.google_llm import Gemini
 from google.adk.runners import Runner
 from google.adk.a2a.executor.a2a_agent_executor import A2aAgentExecutor, A2aAgentExecutorConfig
 from google.adk.a2a.converters.event_converter import convert_event_to_a2a_events
@@ -114,7 +114,7 @@ def main(host, port):
   }
 }
 </a2ui-json>""",
-        model=LiteLlm(model=lite_llm_model),
+        model=Gemini(model=lite_llm_model.replace("vertex_ai/", "").replace("gemini/", "")),
         tools=[],
     )
 

@@ -67,15 +67,9 @@ def main(host, port, subagent_urls):
 
         app = server.build()
 
-        from starlette.responses import FileResponse
-        async def serve_custom_catalog(request):
-            catalog_path = os.path.join(os.path.dirname(__file__), "custom_catalog_definition.json")
-            return FileResponse(catalog_path, media_type="application/json")
-        app.add_route("/custom_catalog_definition.json", serve_custom_catalog)
-
         app.add_middleware(
             CORSMiddleware,
-            allow_origins=["*"],
+            allow_origins=["http://localhost:5173"],
             allow_credentials=True,
             allow_methods=["*"],
             allow_headers=["*"],

@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# run_demo.sh - run the orchestrator and all 4 subagents with prefixes
+# run_demo.sh - run the orchestrator and all subagents with prefixes
 
 # Kill all child processes when this script exits
 trap 'kill $(jobs -p) 2>/dev/null' INT TERM EXIT
@@ -22,6 +22,7 @@ BLUE='\033[0;34m'
 MAGENTA='\033[0;35m'
 YELLOW='\033[0;33m'
 GREEN='\033[0;32m'
+CYAN='\033[0;36m'
 RED_BOLD='\033[1;31m'
 NC='\033[0m'
 
@@ -40,6 +41,7 @@ run_with_prefix "$BLUE"     "FRONT DESK  " uv run --no-sync subagent_front_desk.
 run_with_prefix "$MAGENTA"  "HOUSEKEEPING" uv run --no-sync subagent_housekeeping.py --port=10012
 run_with_prefix "$YELLOW"   "MAINTENANCE " uv run --no-sync subagent_maintenance.py --port=10013
 run_with_prefix "$GREEN"    "ROOM SERVICE" uv run --no-sync subagent_room_service.py --port=10014
+run_with_prefix "$CYAN"     "SALES ANALYST" uv run --no-sync subagent_sales_performance_analyst.py --port=10015
 
 run_orchestrator() {
   sleep 2 && \
@@ -47,7 +49,8 @@ run_orchestrator() {
     --subagent_urls=http://localhost:10011 \
     --subagent_urls=http://localhost:10012 \
     --subagent_urls=http://localhost:10013 \
-    --subagent_urls=http://localhost:10014
+    --subagent_urls=http://localhost:10014 \
+    --subagent_urls=http://localhost:10015
 }
 run_with_prefix "$RED_BOLD" "ORCHESTRATOR" run_orchestrator
 

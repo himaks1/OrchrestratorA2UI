@@ -19,7 +19,7 @@ import uvicorn
 from dotenv import load_dotenv
 
 from google.adk.agents.llm_agent import LlmAgent
-from google.adk.models.google_llm import Gemini
+from google.adk.models.gemini import Gemini
 from google.adk.runners import Runner
 from google.adk.a2a.executor.a2a_agent_executor import A2aAgentExecutor, A2aAgentExecutorConfig
 from google.adk.a2a.converters.event_converter import convert_event_to_a2a_events
@@ -53,18 +53,18 @@ logging.basicConfig(level=logging.INFO)
 
 @click.command()
 @click.option("--host", default="localhost", type=str)
-@click.option("--port", default=10013, type=int)
+@click.option("--port", default=10014, type=int)
 def main(host, port):
     lite_llm_model = os.getenv("LITELLM_MODEL", "gemini/gemini-3.5-flash")
     agent = LlmAgent(
-        name="subagent_maintenance",
-        description="Hotel maintenance agent",
-        instruction="""You are the hotel maintenance agent. You handle repairs and diagnosing issues. If the user reports an issue, return this A2UI form:
+        name="subagent_room_service",
+        description="Hotel room service agent",
+        instruction="""You are the hotel room service agent. You handle ordering food to rooms. If the user asks for food, return this A2UI form:
 <a2ui-json>
 {
   "version": "v0.9",
   "createSurface": {
-    "surfaceId": "maintenance",
+    "surfaceId": "room_service",
     "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
   }
 }
@@ -73,12 +73,12 @@ def main(host, port):
 {
   "version": "v0.9",
   "updateComponents": {
-    "surfaceId": "maintenance",
+    "surfaceId": "room_service",
     "components": [
       {
         "id": "root",
         "component": "Column",
-        "children": ["room_num", "issue", "submit_btn"]
+        "children": ["room_num", "food_menu", "submit_btn"]
       },
       {
         "id": "room_num",
@@ -86,9 +86,15 @@ def main(host, port):
         "label": "Room Number"
       },
       {
-        "id": "issue",
-        "component": "TextField",
-        "label": "Describe Issue"
+        "id": "food_menu",
+        "component": "ChoicePicker",
+        "label": "Menu Item",
+        "options": [
+          {"label": "Burger", "value": "burger"},
+          {"label": "Pizza", "value": "pizza"},
+          {"label": "Salad", "value": "salad"}
+        ],
+        "value": []
       },
       {
         "id": "submit_btn",
@@ -96,14 +102,14 @@ def main(host, port):
         "child": "submit_btn_txt",
         "action": {
           "event": {
-            "name": "report_issue"
+            "name": "order_food"
           }
         }
       },
       {
         "id": "submit_btn_txt",
         "component": "Text",
-        "text": "Submit"
+        "text": "Order"
       }
     ]
   }
@@ -127,8 +133,8 @@ def main(host, port):
     ]
 
     agent_card = AgentCard(
-        name="Maintenance",
-        description="Hotel maintenance agent",
+        name="Room Service",
+        description="Hotel room service agent",
         url=f"http://{host}:{port}",
         version="1.0.0",
         default_input_modes=["text"],
@@ -136,19 +142,12 @@ def main(host, port):
         capabilities=AgentCapabilities(streaming=True, extensions=extensions),
         skills=[
             AgentSkill(
-                id="repairs",
-                name="repairs",
-                description="Handle room repairs",
-                examples=["The AC is broken"],
-                tags=["repairs"],
-            ),
-            AgentSkill(
-                id="diagnose_issues",
-                name="diagnose_issues",
-                description="Diagnose room issues",
-                examples=["The TV isn't turning on"],
-                tags=["diagnose"],
-            ),
+                id="order_food",
+                name="order_food",
+                description="Order food to a room",
+                examples=["I want to order a burger to my room"],
+                tags=["food"],
+            )
         ],
     )
 
