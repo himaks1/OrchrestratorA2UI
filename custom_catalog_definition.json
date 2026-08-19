@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/himaks1/OrchrestratorA2UI/main/custom_catalog_definition.json",
-  "catalogId": "https://raw.githubusercontent.com/himaks1/OrchrestratorA2UI/main/custom_catalog_definition.json",
+  "$id": "https://orchestrator-agent-622946729509.us-central1.run.app/custom_catalog_definition.json",
+  "catalogId": "https://orchestrator-agent-622946729509.us-central1.run.app/custom_catalog_definition.json",
   "title": "Custom Enterprise Data & Analytics Catalog",
   "description": "A custom A2UI catalog supporting interactive DataTables, DataGrids, Charts (Bar, Line, Pie, Doughnut, Area), and standard layout elements.",
   "components": {
