@@ -183,6 +183,115 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
         # Invalid component fails schema validation, yielding 0 converted parts
         self.assertEqual(len(result), 0)
 
+    def test_material_catalog_components(self):
+        """Test parsing and validation of custom MaterialCatalog components."""
+        text = """
+<a2ui-json>
+{
+  "version": "v0.9",
+  "createSurface": {
+    "surfaceId": "subagent_sales_perfbarchart/sales_dashboard_12345"
+  }
+}
+</a2ui-json>
+<a2ui-json>
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "subagent_sales_perfbarchart/sales_dashboard_12345",
+    "components": [
+      {
+        "id": "root",
+        "component": "Card",
+        "child": "content_col"
+      },
+      {
+        "id": "content_col",
+        "component": "Column",
+        "children": ["title", "sales_chart", "sales_data_table", "drill_down_btn"]
+      },
+      {
+        "id": "title",
+        "component": "Text",
+        "text": "### Sales Performance Report",
+        "variant": "h3"
+      },
+      {
+        "id": "sales_chart",
+        "component": "VegaChart",
+        "props": {
+          "spec": {
+            "mark": "bar",
+            "data": {
+              "values": [
+                {"division": "Enterprise", "revenue_actual": 1200000},
+                {"division": "Commercial", "revenue_actual": 750000}
+              ]
+            },
+            "encoding": {
+              "x": {"field": "division", "type": "nominal"},
+              "y": {"field": "revenue_actual", "type": "quantitative"}
+            }
+          }
+        }
+      },
+      {
+        "id": "sales_data_table",
+        "component": "MaterialTable",
+        "columns": [
+          {"header": "Division", "field": "division"},
+          {"header": "Revenue YTD Actual", "field": "revenue_actual"}
+        ],
+        "rows": [
+          {"division": "Enterprise", "revenue_actual": "$1,200,000"},
+          {"division": "Commercial", "revenue_actual": "$750,000"}
+        ]
+      },
+      {
+        "id": "drill_down_btn",
+        "component": "MaterialButton",
+        "child": "drill_down_btn_txt",
+        "action": {
+          "event": {
+            "name": "analyze_sales_performance",
+            "context": {
+               "query": "Show me the top 3 VPs for all divisions"
+            }
+          }
+        }
+      },
+      {
+        "id": "drill_down_btn_txt",
+        "component": "Text",
+        "text": "Show Top 3 VPs for All Divisions"
+      }
+    ]
+  }
+}
+</a2ui-json>
+"""
+        part = Part(text=text)
+        result = a2ui_converter.convert(part)
+        self.assertEqual(len(result), 2)
+        
+        # Verify updateComponents contains MaterialTable and VegaChart
+        data = result[1].root.data["updateComponents"]
+        components = data["components"]
+        
+        chart = next((c for c in components if c.get("id") == "sales_chart"), None)
+        self.assertIsNotNone(chart)
+        self.assertEqual(chart["component"], "VegaChart")
+        self.assertEqual(chart["props"]["spec"]["mark"], "bar")
+        
+        table = next((c for c in components if c.get("id") == "sales_data_table"), None)
+        self.assertIsNotNone(table)
+        self.assertEqual(table["component"], "MaterialTable")
+        self.assertEqual(len(table["columns"]), 2)
+        
+        btn = next((c for c in components if c.get("id") == "drill_down_btn"), None)
+        self.assertIsNotNone(btn)
+        self.assertEqual(btn["component"], "MaterialButton")
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -66,8 +66,8 @@ def make_catalog_id_optional(schema: any) -> any:
 inference_format = DirectJsonFormat(
     version=VERSION_0_9,
     catalogs=[
-        BasicCatalog.get_config(version=VERSION_0_9),
-        MaterialCatalog.get_config(version=VERSION_0_9)
+        MaterialCatalog.get_config(version=VERSION_0_9),
+        BasicCatalog.get_config(version=VERSION_0_9)
     ],
     schema_modifiers=[remove_strict_validation, make_catalog_id_optional],
 )
