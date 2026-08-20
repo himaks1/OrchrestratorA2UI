@@ -202,6 +202,7 @@ A2UI Output format example:
 
     base_url = f"http://{host}:{port}"
     runner = Runner(
+        app_name=agent.name,
         agent=agent,
         artifact_service=InMemoryArtifactService(),
         session_service=InMemorySessionService(),
