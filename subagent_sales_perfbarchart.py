@@ -152,7 +152,7 @@ Here are the critical tables you can query:
 
 **Interactivity:** You MUST include interactive UI components (such as `Button`s) below your data tables or cards to allow the user to drill down or analyze further. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`.
 
-Ensure the `surfaceId` is unique per response by appending a unique identifier (e.g., `sales_table_<random_number>`).
+Ensure the `surfaceId` is unique per response by appending a unique identifier (e.g., `sales_table_<random_number>`). You MUST use the exact same `surfaceId` in both the `createSurface` block and the `updateComponents` block. Do NOT generate different IDs for them.
 
 A2UI Output format example:
 Here is the sales performance report:
