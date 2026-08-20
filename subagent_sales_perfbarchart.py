@@ -26,12 +26,26 @@ from a2ui.inference_formats.direct_json import DirectJsonFormat
 from a2ui.adk.a2a.part_converter import A2uiPartConverter
 from a2ui.schema.common_modifiers import remove_strict_validation
 
+def add_vega_chart(schema: dict) -> dict:
+    if "components" in schema:
+        schema["components"]["VegaChart"] = {
+            "type": "object",
+            "properties": {
+                "component": {"const": "VegaChart"},
+                "props": {"type": "object"}
+            },
+            "required": ["component"]
+        }
+        if "$defs" in schema and "anyComponent" in schema["$defs"]:
+            schema["$defs"]["anyComponent"]["oneOf"].append({"$ref": "#/components/VegaChart"})
+    return schema
+
 inference_format = DirectJsonFormat(
     version=VERSION_0_9,
     catalogs=[
         BasicCatalog.get_config(version=VERSION_0_9)
     ],
-    schema_modifiers=[remove_strict_validation],
+    schema_modifiers=[remove_strict_validation, add_vega_chart],
 )
 my_catalog = inference_format.get_selected_catalog()
 a2ui_converter = A2uiPartConverter(a2ui_catalog=my_catalog, version=VERSION_0_9)
@@ -109,10 +123,9 @@ Here are the critical tables you can query:
 7. `sales_team_org`: Contains `employee_id`, `employee_name`, `role`, `division`, `segment`, `group_name`, `department`, `email`, `avp`, `vp`, `svp`.
 
 **A2UI Output Rule:**
-When you present data summaries, breakdowns, or visual comparisons, you MUST use native components from the basic catalog schema (`Card`, `Column`, `Row`, `Text`, `Button`).
-For data breakdowns, use formatted Markdown tables or visual metric bars inside `Text` components.
+When you present data summaries, breakdowns, or visual comparisons, you MUST use the native `VegaChart` component defined in the catalog schema with an embedded Vega-Lite specification in `props.spec`.
 
-**Interactivity:** You MUST include interactive UI components (such as `Button`s) below your data cards to allow the user to drill down or analyze further. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`.
+**Interactivity:** You MUST include interactive UI components (such as `Button`s) below your data charts or cards to allow the user to drill down or analyze further. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`.
 
 Set the `catalogId` to `"https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"`.
 
@@ -142,7 +155,7 @@ A2UI Output format example:
       {
         "id": "content_col",
         "component": "Column",
-        "children": ["title", "revenue_summary", "drill_down_btn"]
+        "children": ["title", "sales_bar_chart", "drill_down_btn"]
       },
       {
         "id": "title",
@@ -151,9 +164,25 @@ A2UI Output format example:
         "variant": "h3"
       },
       {
-        "id": "revenue_summary",
-        "component": "Text",
-        "text": "| Division | Revenue ($) | Share |\n|---|---|---|\n| **Enterprise** | $1,200,000 | 61.5% |\n| **Commercial** | $750,000 | 38.5% |"
+        "id": "sales_bar_chart",
+        "component": "VegaChart",
+        "props": {
+          "spec": {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "description": "Revenue Performance by Division",
+            "data": {
+              "values": [
+                {"division": "Enterprise", "revenue": 1200000},
+                {"division": "Commercial", "revenue": 750000}
+              ]
+            },
+            "mark": "bar",
+            "encoding": {
+              "x": {"field": "division", "type": "nominal", "axis": {"title": "Division"}},
+              "y": {"field": "revenue", "type": "quantitative", "axis": {"title": "Revenue ($)"}}
+            }
+          }
+        }
       },
       {
         "id": "drill_down_btn",

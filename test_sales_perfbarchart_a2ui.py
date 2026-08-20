@@ -32,7 +32,7 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
         "component": "Column",
         "children": [
           "title",
-          "revenue_summary"
+          "sales_bar_chart"
         ]
       },
       {
@@ -42,9 +42,25 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
         "variant": "h3"
       },
       {
-        "id": "revenue_summary",
-        "component": "Text",
-        "text": "Division: Enterprise - Revenue: $1,200,000"
+        "id": "sales_bar_chart",
+        "component": "VegaChart",
+        "props": {
+          "spec": {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "description": "Revenue Performance by Division",
+            "data": {
+              "values": [
+                {"division": "Enterprise", "revenue": 1200000},
+                {"division": "Commercial", "revenue": 750000}
+              ]
+            },
+            "mark": "bar",
+            "encoding": {
+              "x": {"field": "division", "type": "nominal"},
+              "y": {"field": "revenue", "type": "quantitative"}
+            }
+          }
+        }
       }
     ]
   }
@@ -62,15 +78,16 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
         self.assertIn("createSurface", data)
         self.assertEqual(data["createSurface"]["catalogId"], "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json")
         
-        # Verify updateComponents contains Text component
+        # Verify updateComponents contains VegaChart component
         update_components_part = result[1]
         data2 = update_components_part.root.data
         self.assertIn("updateComponents", data2)
         
         components = data2["updateComponents"]["components"]
-        text_component = next((c for c in components if c.get("id") == "revenue_summary"), None)
-        self.assertIsNotNone(text_component)
-        self.assertIn("Enterprise", text_component["text"])
+        chart_component = next((c for c in components if c.get("id") == "sales_bar_chart"), None)
+        self.assertIsNotNone(chart_component)
+        self.assertEqual(chart_component["component"], "VegaChart")
+        self.assertEqual(chart_component["props"]["spec"]["mark"], "bar")
 
     def test_bargraph_interactive_button_action(self):
         """Test drill-down button with event context payload."""
