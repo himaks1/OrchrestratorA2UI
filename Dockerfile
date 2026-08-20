@@ -5,6 +5,7 @@ ENV PYTHONUNBUFFERED=1
 ENV LITELLM_MODEL="vertex_ai/gemini-2.5-flash"
 ENV VERTEX_PROJECT="ssrg-agents"
 ENV VERTEX_LOCATION="us-central1"
+ENV UV_HTTP_TIMEOUT=120
 
 WORKDIR /app
 COPY . /app
