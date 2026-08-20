@@ -22,7 +22,8 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
 {
   "version": "v0.9",
   "createSurface": {
-    "surfaceId": "subagent_sales_perfbarchart/sales_bargraph_26891"
+    "surfaceId": "subagent_sales_perfbarchart/sales_table_26891",
+    "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
   }
 }
 </a2ui-json>
@@ -30,7 +31,7 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
 {
   "version": "v0.9",
   "updateComponents": {
-    "surfaceId": "subagent_sales_perfbarchart/sales_bargraph_26891",
+    "surfaceId": "subagent_sales_perfbarchart/sales_table_26891",
     "components": [
       {
         "id": "root",
@@ -42,7 +43,7 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
         "component": "Column",
         "children": [
           "title",
-          "sales_bar_chart"
+          "sales_data_table"
         ]
       },
       {
@@ -52,25 +53,10 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
         "variant": "h3"
       },
       {
-        "id": "sales_bar_chart",
-        "component": "VegaChart",
-        "props": {
-          "spec": {
-            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-            "description": "Revenue Performance by Division",
-            "data": {
-              "values": [
-                {"division": "Enterprise", "revenue": 1200000},
-                {"division": "Commercial", "revenue": 750000}
-              ]
-            },
-            "mark": "bar",
-            "encoding": {
-              "x": {"field": "division", "type": "nominal"},
-              "y": {"field": "revenue", "type": "quantitative"}
-            }
-          }
-        }
+        "id": "sales_data_table",
+        "component": "Text",
+        "text": "| Division | Revenue YTD Actual |\\n|---|---|\\n| Enterprise | $1,200,000 |\\n| Commercial | $750,000 |",
+        "variant": "body"
       }
     ]
   }
@@ -86,18 +72,18 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
         create_surface_part = result[0]
         data = create_surface_part.root.data
         self.assertIn("createSurface", data)
-        self.assertNotIn("catalogId", data["createSurface"])
+        self.assertEqual(data["createSurface"]["catalogId"], "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json")
         
-        # Verify updateComponents contains VegaChart component
+        # Verify updateComponents contains Text table component
         update_components_part = result[1]
         data2 = update_components_part.root.data
         self.assertIn("updateComponents", data2)
         
         components = data2["updateComponents"]["components"]
-        chart_component = next((c for c in components if c.get("id") == "sales_bar_chart"), None)
-        self.assertIsNotNone(chart_component)
-        self.assertEqual(chart_component["component"], "VegaChart")
-        self.assertEqual(chart_component["props"]["spec"]["mark"], "bar")
+        table_component = next((c for c in components if c.get("id") == "sales_data_table"), None)
+        self.assertIsNotNone(table_component)
+        self.assertEqual(table_component["component"], "Text")
+        self.assertIn("Enterprise", table_component["text"])
 
     def test_bargraph_interactive_button_action(self):
         """Test drill-down button with event context payload."""

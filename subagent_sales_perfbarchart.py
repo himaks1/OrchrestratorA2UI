@@ -67,7 +67,7 @@ inference_format = DirectJsonFormat(
     catalogs=[
         BasicCatalog.get_config(version=VERSION_0_9)
     ],
-    schema_modifiers=[remove_strict_validation, add_vega_chart, make_catalog_id_optional],
+    schema_modifiers=[remove_strict_validation, make_catalog_id_optional],
 )
 my_catalog = inference_format.get_selected_catalog()
 a2ui_converter = A2uiPartConverter(a2ui_catalog=my_catalog, version=VERSION_0_9)
@@ -146,12 +146,13 @@ Here are the critical tables you can query:
 
 **A2UI Output Rule:**
 1. You MUST always output a short text message summarizing the results (1-2 sentences) first, followed by the A2UI blocks. This ensures the chat client has a text bubble to render and anchor the UI surface.
-2. When you present data summaries, breakdowns, or visual comparisons, you MUST use the native `VegaChart` component defined in the catalog schema with an embedded Vega-Lite specification in `props.spec`.
-3. To keep the visual charts readable and prevent payload/token overflows, you MUST limit your chart data to the **top 3 to 5 items** per category or division (e.g. top performing VPs, top customer segments). Apply SQL ranking filters (like `ROW_NUMBER() OVER (PARTITION BY ... ORDER BY ... DESC) <= 3`) directly in your queries so you only fetch and plot the most relevant top performers. Do NOT attempt to plot dozens of individual data points on a single chart.
+2. You MUST use the official Basic Catalog ID in the `catalogId` field of `createSurface` so the client frontend resolves the schema natively: `"catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"`.
+3. When you present data summaries, breakdowns, or visual comparisons, you MUST use a standard `Text` component to display a formatted Markdown Table (e.g. headers, columns, values). Do NOT use any custom chart or graph components.
+4. To keep the tables readable, you MUST limit your results to the **top 3 to 5 items** per category or division (e.g. top performing VPs, top customer segments). Apply SQL ranking filters (like `ROW_NUMBER() OVER (PARTITION BY ... ORDER BY ... DESC) <= 3`) directly in your queries.
 
-**Interactivity:** You MUST include interactive UI components (such as `Button`s) below your data charts or cards to allow the user to drill down or analyze further. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`.
+**Interactivity:** You MUST include interactive UI components (such as `Button`s) below your data tables or cards to allow the user to drill down or analyze further. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`.
 
-Ensure the `surfaceId` is unique per response by appending a unique identifier (e.g., `sales_bargraph_<random_number>`).
+Ensure the `surfaceId` is unique per response by appending a unique identifier (e.g., `sales_table_<random_number>`).
 
 A2UI Output format example:
 Here is the sales performance report:
@@ -159,7 +160,8 @@ Here is the sales performance report:
 {
   "version": "v0.9",
   "createSurface": {
-    "surfaceId": "sales_bargraph_12345"
+    "surfaceId": "sales_table_12345",
+    "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
   }
 }
 </a2ui-json>
@@ -167,7 +169,7 @@ Here is the sales performance report:
 {
   "version": "v0.9",
   "updateComponents": {
-    "surfaceId": "sales_bargraph_12345",
+    "surfaceId": "sales_table_12345",
     "components": [
       {
         "id": "root",
@@ -177,7 +179,7 @@ Here is the sales performance report:
       {
         "id": "content_col",
         "component": "Column",
-        "children": ["title", "sales_bar_chart", "drill_down_btn"]
+        "children": ["title", "sales_data_table", "drill_down_btn"]
       },
       {
         "id": "title",
@@ -186,25 +188,10 @@ Here is the sales performance report:
         "variant": "h3"
       },
       {
-        "id": "sales_bar_chart",
-        "component": "VegaChart",
-        "props": {
-          "spec": {
-            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-            "description": "Revenue Performance by Division",
-            "data": {
-              "values": [
-                {"division": "Enterprise", "revenue": 1200000},
-                {"division": "Commercial", "revenue": 750000}
-              ]
-            },
-            "mark": "bar",
-            "encoding": {
-              "x": {"field": "division", "type": "nominal", "axis": {"title": "Division"}},
-              "y": {"field": "revenue", "type": "quantitative", "axis": {"title": "Revenue ($)"}}
-            }
-          }
-        }
+        "id": "sales_data_table",
+        "component": "Text",
+        "text": "| Division | Revenue YTD Target | Revenue YTD Actual | Achievement % |\n|---|---|---|---|\n| Enterprise | $1,500,000 | $1,200,000 | 80% |\n| Commercial | $800,000 | $750,000 | 93.7% |",
+        "variant": "body"
       },
       {
         "id": "drill_down_btn",
