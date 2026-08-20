@@ -10,7 +10,7 @@ class TestSalesPerformanceA2UI(unittest.TestCase):
   "version": "v0.9",
   "createSurface": {
     "surfaceId": "Sales_Performance_Analyst/sales_analyst_26891",
-    "catalogId": "https://orchestrator-agent-622946729509.us-central1.run.app/custom_catalog_definition.json"
+    "catalogId": "https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json"
   }
 }
 </a2ui-json>

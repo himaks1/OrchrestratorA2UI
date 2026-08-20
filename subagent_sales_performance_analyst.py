@@ -125,7 +125,7 @@ Example `Chart` component:
 
 **Interactivity:** You MUST include interactive UI components (such as `Button`s) below your data tables or charts to allow the user to drill down or analyze further. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`.
 
-Set the `catalogId` to `"https://orchestrator-agent-622946729509.us-central1.run.app/custom_catalog_definition.json"`.
+Set the `catalogId` to `"https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json"`.
 
 Ensure the `surfaceId` is unique per response by appending a unique identifier (e.g., `sales_analyst_<random_number>`).
 
@@ -135,7 +135,7 @@ A2UI Output format example:
   "version": "v0.9",
   "createSurface": {
     "surfaceId": "sales_analyst_12345",
-    "catalogId": "https://orchestrator-agent-622946729509.us-central1.run.app/custom_catalog_definition.json"
+    "catalogId": "https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json"
   }
 }
 </a2ui-json>
