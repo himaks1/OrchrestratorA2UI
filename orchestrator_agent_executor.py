@@ -55,12 +55,15 @@ from a2a.types import TransportProtocol as A2ATransport, AgentCard, AgentCapabil
 from a2ui.a2a.extension import (
     try_activate_a2ui_extension,
     get_a2ui_extension_uri,
+    get_a2ui_agent_extension,
     A2UI_EXTENSION_BASE_URI,
     AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY,
     AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY,
 )
 from a2ui.a2a.parts import is_a2ui_part
 from a2ui.schema.constants import (
+    VERSION_0_8,
+    VERSION_0_9,
     A2UI_CLIENT_CAPABILITIES_KEY,
     A2UI_CLIENT_DATA_MODEL_KEY,
     A2UI_CLIENT_DATA_MODEL_SURFACES_KEY,
@@ -360,6 +363,15 @@ class OrchestratorAgentExecutor(A2aAgentExecutor):
             before_model_callback=cls.programmatically_route_client_event_to_subagent,
         )
 
+        orchestrator_extensions = [
+            get_a2ui_agent_extension(VERSION_0_8, False, []),
+            get_a2ui_agent_extension(
+                VERSION_0_9,
+                accepts_inline_catalogs,
+                list(supported_catalog_ids),
+            ),
+        ]
+
         agent_card = AgentCard(
             name="Orchestrator Agent",
             description="This agent orchestrates requests to multiple subagents.",
@@ -369,7 +381,7 @@ class OrchestratorAgentExecutor(A2aAgentExecutor):
             default_output_modes=["text", "text/plain"],
             capabilities=AgentCapabilities(
                 streaming=True,
-                extensions=extensions,
+                extensions=orchestrator_extensions,
             ),
             skills=skills,
         )
