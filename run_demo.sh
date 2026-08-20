@@ -42,6 +42,7 @@ run_with_prefix "$MAGENTA"  "COMPETITOR   " uv run --no-sync subagent_competitor
 run_with_prefix "$YELLOW"   "FINANCIALS   " uv run --no-sync subagent_financial_analyst.py --port=10017
 run_with_prefix "$GREEN"    "RECOMMENDER  " uv run --no-sync subagent_product_recommender.py --port=10018
 run_with_prefix "$BLUE"     "ORG ANALYST  " uv run --no-sync subagent_salesteam_org_analyst.py --port=10019
+run_with_prefix "$CYAN"     "STRATEGIST   " uv run --no-sync subagent_strategic_profiler.py --port=10020
 
 run_orchestrator() {
   sleep 2 && \
@@ -50,9 +51,11 @@ run_orchestrator() {
     --subagent_urls=http://localhost:10016 \
     --subagent_urls=http://localhost:10017 \
     --subagent_urls=http://localhost:10018 \
-    --subagent_urls=http://localhost:10019
+    --subagent_urls=http://localhost:10019 \
+    --subagent_urls=http://localhost:10020
 }
 run_with_prefix "$RED_BOLD" "ORCHESTRATOR" run_orchestrator
+
 
 
 wait
