@@ -197,6 +197,7 @@ A2UI Output format example:
 }
 </a2ui-json>
 """,
+        model=Gemini(model=lite_llm_model.replace("vertex_ai/", "").replace("gemini/", "")),
         tools=[execute_readonly_sql],
     )
 
@@ -209,19 +210,23 @@ A2UI Output format example:
         memory_service=InMemoryMemoryService(),
     )
 
-    config = A2aAgentExecutorConfig(
-        runner=runner,
-        event_converter=convert_event_to_a2a_events,
-        lite_llm_model=lite_llm_model,
-        a2ui_converter=a2ui_converter,
+    executor_config = A2aAgentExecutorConfig(
+        event_converter=lambda e, ic, tid=None, cid=None, pcf=None: convert_event_to_a2a_events(
+            e, ic, tid, cid, a2ui_converter.convert
+        )
     )
+    agent_executor = A2aAgentExecutor(runner=runner, config=executor_config)
 
-    agent_executor = A2aAgentExecutor(config=config)
+    extensions = [
+        get_a2ui_agent_extension(VERSION_0_8, False, []),
+        get_a2ui_agent_extension(VERSION_0_9, False, []),
+    ]
 
     capabilities = AgentCapabilities(
-        streaming=False,
+        streaming=True,
         push=False,
         history=True,
+        extensions=extensions,
     )
 
     skills = [
@@ -249,13 +254,6 @@ A2UI Output format example:
         default_output_modes=["text"],
     )
 
-    a2ui_extension = get_a2ui_agent_extension(
-        agent_card=agent_card,
-        supported_catalog_ids=[
-            "https://a2ui.org/catalogs/bargraph/0.9/bargraph_catalog_definition.json"
-        ],
-    )
-
     request_handler = DefaultRequestHandler(
         agent_executor=agent_executor,
         task_store=InMemoryTaskStore(),
@@ -264,7 +262,6 @@ A2UI Output format example:
     server = A2AStarletteApplication(
         agent_card=agent_card,
         http_handler=request_handler,
-        agent_extensions=[a2ui_extension],
     )
 
     app = server.build()
