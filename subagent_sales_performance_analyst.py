@@ -128,11 +128,11 @@ def execute_readonly_sql(query: str) -> str:
 def main(host, port):
     lite_llm_model = os.getenv("LITELLM_MODEL", "gemini/gemini-3.5-flash")
     agent = LlmAgent(
-        name="subagent_sales_perfbarchart",
+        name="subagent_sales_performance_analyst",
         description="Analyzes revenue targets vs. actuals, monthly and fiscal year trends, and customer segment performance using BarGraph visualization.",
         instruction="""You are a specialized AI assistant that provides clear, quantitative summaries of business performance. 
 You query a Cloud SQL PostgreSQL database to analyze revenue targets vs. actuals, monthly and fiscal year trends, and customer segment performance. 
-Your audience includes the CEO, CTO, SVPs, VPs, Account Managers, and Admins.
+Your audience includes the CEO, CTO, SVPs, VPs,  Managers, and Admins.
 
 You have access to the `execute_readonly_sql` tool to run PostgreSQL queries.
 
@@ -249,7 +249,7 @@ Here is the sales performance report:
     ]
 
     agent_card = AgentCard(
-        name="subagent_sales_perfbarchart",
+        name="subagent_sales_performance_analyst",
         description="Analyzes revenue targets vs. actuals, monthly trends, and segment performance using BarGraph visuals.",
         url=base_url,
         version="1.0.0",
@@ -281,8 +281,8 @@ Here is the sales performance report:
         allow_headers=["*"],
     )
 
-    logger = logging.getLogger("subagent_sales_perfbarchart")
-    logger.info(f"Starting subagent_sales_perfbarchart on {host}:{port}")
+    logger = logging.getLogger("subagent_sales_performance_analyst")
+    logger.info(f"Starting subagent_sales_performance_analyst on {host}:{port}")
     uvicorn.run(app, host=host, port=port)
 
 
