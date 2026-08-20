@@ -12,7 +12,7 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
   "version": "v0.9",
   "createSurface": {
     "surfaceId": "subagent_sales_perfbarchart/sales_bargraph_26891",
-    "catalogId": "google3:///analysis/a2ui/specification/v0_9/ge_composite_catalog.json"
+    "catalogId": "https://a2ui.org/specification/v0_9/ge_composite_catalog.json"
   }
 }
 </a2ui-json>
@@ -76,7 +76,7 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
         create_surface_part = result[0]
         data = create_surface_part.root.data
         self.assertIn("createSurface", data)
-        self.assertEqual(data["createSurface"]["catalogId"], "google3:///analysis/a2ui/specification/v0_9/ge_composite_catalog.json")
+        self.assertEqual(data["createSurface"]["catalogId"], "https://a2ui.org/specification/v0_9/ge_composite_catalog.json")
         
         # Verify updateComponents contains VegaChart component
         update_components_part = result[1]
@@ -97,7 +97,7 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
   "version": "v0.9",
   "createSurface": {
     "surfaceId": "subagent_sales_perfbarchart/sales_bargraph_999",
-    "catalogId": "google3:///analysis/a2ui/specification/v0_9/ge_composite_catalog.json"
+    "catalogId": "https://a2ui.org/specification/v0_9/ge_composite_catalog.json"
   }
 }
 </a2ui-json>
@@ -164,7 +164,7 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
   "version": "v0.9",
   "createSurface": {
     "surfaceId": "subagent_sales_perfbarchart/test_invalid",
-    "catalogId": "google3:///analysis/a2ui/specification/v0_9/ge_composite_catalog.json"
+    "catalogId": "https://a2ui.org/specification/v0_9/ge_composite_catalog.json"
   }
 }
 </a2ui-json>
