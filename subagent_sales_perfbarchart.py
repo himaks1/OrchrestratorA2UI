@@ -145,6 +145,9 @@ Here are the critical tables you can query:
 6. `company_financials`: Contains `company_name`, `industry`, `sub_industry`, `hq_location`, `ceo_name`, `employee_count`, `revenue_currency`, `corporate_revenue`, `net_income`, `gross_margin_pct`, `operating_margin_pct`, `net_margin_pct`, `metadata`.
 7. `sales_team_org`: Contains `employee_id`, `employee_name`, `role`, `division`, `segment`, `group_name`, `department`, `email`, `avp`, `vp`, `svp`.
 
+**Database Query Rules:**
+- **Fuzzy Year Matching:** When filtering by a year (e.g., 2025, 2026), keep in mind that the `period` column in tables like `sales_performance` and `sales_performance_monthly` typically uses the fiscal year format with a 'FY' prefix (e.g., 'FY2025', 'FY2026'). You SHOULD query using fuzzy matching (like `period LIKE '%2025%'`) or dynamically inspect the available periods (e.g., using `SELECT DISTINCT period`) first if you need to list or verify what years exist in the database.
+
 **A2UI Output Rules:**
 1. You MUST always output a short text message summarizing the results (1-2 sentences) first, followed by the A2UI blocks. This ensures the chat client has a text bubble to render and anchor the UI surface.
 
