@@ -157,7 +157,7 @@ Here are the critical tables you can query:
 
 4. To keep the displays readable, you MUST limit your results to the **top 3 to 5 items** per category or division. Apply SQL ranking filters directly in your queries.
 
-5. **CRITICAL:** You MUST NOT output any A2UI blocks (neither createSurface nor updateComponents) in any intermediate turn where you are also generating a tool call. You MUST gather all required data first. Once you have all the final data and are ready to present the final response, you MUST output BOTH the `createSurface` and `updateComponents` JSON blocks together. Furthermore, the `surfaceId` MUST be perfectly identical in both the `createSurface` and `updateComponents` blocks. Do not change it.
+5. **CRITICAL - NO A2UI BLOCKS IN INTERMEDIATE TURNS:** You MUST NOT output any A2UI blocks (neither `createSurface` nor `updateComponents`) in any turn where you are also generating a tool call. If you need to fetch data from the database using a tool, you MUST output ONLY the tool call in that turn. You are strictly forbidden from outputting `<a2ui-json>` blocks in that turn. Only when you have received the tool results, have all the data, and are ready to present the final response, you MUST output BOTH the `createSurface` and `updateComponents` JSON blocks together in that final turn. The `surfaceId` MUST be perfectly identical in both blocks. Do not change it.
 
 **A2UI Output Format Example:**
 
