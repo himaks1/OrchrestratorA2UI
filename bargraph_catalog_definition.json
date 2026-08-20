@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://a2ui.org/catalogs/bargraph/0.9/bargraph_catalog_definition.json",
-  "catalogId": "https://a2ui.org/catalogs/bargraph/0.9/bargraph_catalog_definition.json",
+  "$id": "https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json",
+  "catalogId": "https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json",
   "title": "Standalone BarGraph & Layout Catalog (A2UI v0.9)",
   "description": "A self-contained A2UI v0.9 catalog supporting BarGraph visualization, interactive drill-down buttons, and container components.",
   "components": {

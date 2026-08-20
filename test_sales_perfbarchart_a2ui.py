@@ -12,7 +12,7 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
   "version": "v0.9",
   "createSurface": {
     "surfaceId": "subagent_sales_perfbarchart/sales_bargraph_26891",
-    "catalogId": "https://a2ui.org/catalogs/bargraph/0.9/bargraph_catalog_definition.json"
+    "catalogId": "https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json"
   }
 }
 </a2ui-json>
@@ -82,7 +82,7 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
         create_surface_part = result[0]
         data = create_surface_part.root.data
         self.assertIn("createSurface", data)
-        self.assertEqual(data["createSurface"]["catalogId"], "https://a2ui.org/catalogs/bargraph/0.9/bargraph_catalog_definition.json")
+        self.assertEqual(data["createSurface"]["catalogId"], "https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json")
         
         # Verify updateComponents contains the BarGraph component
         update_components_part = result[1]
@@ -103,7 +103,7 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
   "version": "v0.9",
   "createSurface": {
     "surfaceId": "subagent_sales_perfbarchart/sales_bargraph_999",
-    "catalogId": "https://a2ui.org/catalogs/bargraph/0.9/bargraph_catalog_definition.json"
+    "catalogId": "https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json"
   }
 }
 </a2ui-json>
@@ -173,7 +173,7 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
   "version": "v0.9",
   "createSurface": {
     "surfaceId": "subagent_sales_perfbarchart/test_invalid",
-    "catalogId": "https://a2ui.org/catalogs/bargraph/0.9/bargraph_catalog_definition.json"
+    "catalogId": "https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json"
   }
 }
 </a2ui-json>
