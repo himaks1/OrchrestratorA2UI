@@ -43,28 +43,17 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
       },
       {
         "id": "sales_bargraph",
-        "component": "BarGraph",
+        "component": "Chart",
+        "type": "bar",
         "title": "Revenue Performance",
-        "orientation": "vertical",
-        "xAxis": {
-          "label": "Division",
-          "key": "label"
-        },
-        "yAxis": {
-          "label": "Revenue ($)",
-          "key": "value",
-          "format": "currency"
-        },
-        "data": [
+        "chartData": [
           {
             "label": "Enterprise",
-            "value": 1200000.0,
-            "color": "#1A73E8"
+            "value": 1200000.0
           },
           {
             "label": "Commercial",
-            "value": 750000.0,
-            "color": "#34A853"
+            "value": 750000.0
           }
         ]
       }
@@ -84,16 +73,16 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
         self.assertIn("createSurface", data)
         self.assertEqual(data["createSurface"]["catalogId"], "https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json")
         
-        # Verify updateComponents contains the BarGraph component
+        # Verify updateComponents contains the Chart component
         update_components_part = result[1]
         data2 = update_components_part.root.data
         self.assertIn("updateComponents", data2)
         
         components = data2["updateComponents"]["components"]
-        bargraph_component = next((c for c in components if c.get("component") == "BarGraph"), None)
+        bargraph_component = next((c for c in components if c.get("component") == "Chart"), None)
         self.assertIsNotNone(bargraph_component)
-        self.assertEqual(bargraph_component["orientation"], "vertical")
-        self.assertEqual(len(bargraph_component["data"]), 2)
+        self.assertEqual(bargraph_component["type"], "bar")
+        self.assertEqual(len(bargraph_component["chartData"]), 2)
 
     def test_bargraph_interactive_button_action(self):
         """Test drill-down button with event context payload."""
@@ -125,9 +114,10 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
       },
       {
         "id": "sales_bargraph",
-        "component": "BarGraph",
+        "component": "Chart",
+        "type": "bar",
         "title": "Segment Performance",
-        "data": [
+        "chartData": [
           {"label": "Enterprise", "value": 500000}
         ]
       },

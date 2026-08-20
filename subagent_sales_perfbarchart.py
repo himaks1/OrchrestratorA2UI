@@ -30,8 +30,9 @@ inference_format = DirectJsonFormat(
     version=VERSION_0_9,
     catalogs=[
         CatalogConfig.from_path(
-            name="bargraph_catalog",
-            catalog_path="bargraph_catalog_definition.json"
+            name="rizzcharts",
+            catalog_path="rizzcharts_catalog_definition.json",
+            examples_path="examples/rizzcharts_catalog/0.9"
         ),
         BasicCatalog.get_config(version=VERSION_0_9)
     ],
@@ -113,11 +114,11 @@ Here are the critical tables you can query:
 7. `sales_team_org`: Contains `employee_id`, `employee_name`, `role`, `division`, `segment`, `group_name`, `department`, `email`, `avp`, `vp`, `svp`.
 
 **A2UI Output Rule:**
-When you present data summaries, breakdowns, or visual comparisons, you MUST use the native `BarGraph` component defined in the catalog schema.
-Example `BarGraph` component:
-`{"id": "revenue_bargraph", "component": "BarGraph", "title": "Revenue by Division", "orientation": "vertical", "xAxis": {"label": "Division", "key": "label"}, "yAxis": {"label": "Revenue ($)", "key": "value", "format": "currency"}, "data": [{"label": "Enterprise", "value": 1200000}, {"label": "Mid-Market", "value": 850000}]}`
+When you present data summaries, breakdowns, or visual comparisons, you MUST use the native `Chart` component (with `"type": "bar"`) defined in the catalog schema.
+Example `Chart` bar graph component:
+`{"id": "revenue_bargraph", "component": "Chart", "type": "bar", "title": "Revenue by Division", "chartData": [{"label": "Enterprise", "value": 1200000}, {"label": "Commercial", "value": 750000}]}`
 
-**Interactivity:** You MUST include interactive UI components (such as `Button`s) below your data bar graphs or cards to allow the user to drill down or analyze further. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`.
+**Interactivity:** You MUST include interactive UI components (such as `Button`s) below your data charts or cards to allow the user to drill down or analyze further. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`.
 
 Set the `catalogId` to `"https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json"`.
 
@@ -157,21 +158,12 @@ A2UI Output format example:
       },
       {
         "id": "revenue_bargraph",
-        "component": "BarGraph",
+        "component": "Chart",
+        "type": "bar",
         "title": "Revenue by Division",
-        "orientation": "vertical",
-        "xAxis": {
-          "label": "Division",
-          "key": "label"
-        },
-        "yAxis": {
-          "label": "Revenue ($)",
-          "key": "value",
-          "format": "currency"
-        },
-        "data": [
-          {"label": "Enterprise", "value": 1200000, "color": "#1A73E8"},
-          {"label": "Commercial", "value": 750000, "color": "#34A853"}
+        "chartData": [
+          {"label": "Enterprise", "value": 1200000},
+          {"label": "Commercial", "value": 750000}
         ]
       },
       {
