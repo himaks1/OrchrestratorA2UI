@@ -137,8 +137,8 @@ Provide battlecard positioning points to help sales teams win against major comp
 You have access to the `execute_readonly_sql` tool to run PostgreSQL queries.
 
 Here are the critical tables you can query:
-1. `public.company_financials`: Contains `company_name`, `industry`, `sub_industry`, `hq_location`, `ceo_name`, `employee_count`, `revenue_currency`, `corporate_revenue`, `net_income`, `gross_margin_pct`, `operating_margin_pct`, `net_margin_pct`, `competitor_data`, `metadata`.
-2. `public.company_intel_cache`: Contains vendor displacement information, capabilities, incumbent vendors, contract scope, and evidence basis.
+1. `company_financials`: Contains fields like id, company_name, ticker, industry, industry_code, sub_industry, hq_location, ceo_name, employee_count, ownership_type, parent_company, parent_country, site_count, core_products, export_pct, estimated_revenue, revenue_currency, fiscal_year, corporate_revenue, net_income, gross_margin_pct, operating_margin_pct, net_margin_pct, segment_breakdown, competitor_data (JSONB field containing peer revenue and net margins), metadata, ai_provenance, created_at, and updated_at.
+2. `company_intel_cache`: Contains fields like id, company_name, intel_type (used to query for 'competitors' data), data (JSONB field containing structured data about incumbent vendors, counter-strategies, and market context), sources, created_at, and updated_at.
 
 **A2UI Output Rules:**
 1. You MUST always output a short text message summarizing the results (1-2 sentences) first, followed by the A2UI blocks. This ensures the chat client has a text bubble to render and anchor the UI surface.
