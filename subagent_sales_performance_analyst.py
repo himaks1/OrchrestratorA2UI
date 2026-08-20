@@ -30,9 +30,9 @@ inference_format = DirectJsonFormat(
     version=VERSION_0_9,
     catalogs=[
         CatalogConfig.from_path(
-            name="custom_catalog",
-            catalog_path="custom_catalog_definition.json",
-            examples_path="examples/custom_catalog/0.9"
+            name="rizzcharts",
+            catalog_path="rizzcharts_catalog_definition.json",
+            examples_path="examples/rizzcharts_catalog/0.9"
         ),
         BasicCatalog.get_config(version=VERSION_0_9)
     ],
@@ -114,16 +114,11 @@ Here are the critical tables you can query:
 7. `sales_team_org`: Contains `employee_id`, `employee_name`, `role`, `division`, `segment`, `group_name`, `department`, `email`, `avp`, `vp`, `svp`.
 
 **A2UI Output Rule:**
-When you fetch tabular data or trends, you MUST generate an A2UI `DataTable` component.
-You should dynamically pick the most relevant columns from the SQL results to populate the columns and rows of the `DataTable`.
-Example `DataTable` component:
-`{"id": "sales_table", "component": "DataTable", "title": "Performance Summary", "columns": [{"key": "division", "label": "Division", "type": "string"}, {"key": "actual", "label": "Revenue", "type": "currency"}], "rows": [{"division": "Enterprise", "actual": 1000000}]}`
-
-When the user asks for charts, breakdowns, or visual comparisons, you MUST use the native A2UI `Chart` component (supports `bar`, `line`, `pie`, `doughnut`, `area`).
+When the user asks for charts, breakdowns, or visual comparisons, you MUST use the native A2UI `Chart` component (supports `bar`, `pie`, `doughnut`).
 Example `Chart` component:
 `{"id": "my_chart", "component": "Chart", "type": "bar", "title": "Segment Revenue Comparison", "chartData": [{"label": "Enterprise", "value": 1000000}, {"label": "Mid-Market", "value": 500000}]}`
 
-**Interactivity:** You MUST include interactive UI components (such as `Button`s) below your data tables or charts to allow the user to drill down or analyze further. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`.
+**Interactivity:** You MUST include interactive UI components (such as `Button`s) below your data charts or cards to allow the user to drill down or analyze further. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`.
 
 Set the `catalogId` to `"https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json"`.
 
@@ -153,7 +148,7 @@ A2UI Output format example:
       {
         "id": "content_col",
         "component": "Column",
-        "children": ["title", "sales_table", "drill_down_btn"]
+        "children": ["title", "sales_chart", "drill_down_btn"]
       },
       {
         "id": "title",
@@ -162,15 +157,13 @@ A2UI Output format example:
         "variant": "h3"
       },
       {
-        "id": "sales_table",
-        "component": "DataTable",
+        "id": "sales_chart",
+        "component": "Chart",
+        "type": "bar",
         "title": "Revenue by Division",
-        "columns": [
-          {"key": "division", "label": "Division", "type": "string"},
-          {"key": "actual", "label": "Actual Revenue", "type": "currency"}
-        ],
-        "rows": [
-          {"division": "Enterprise", "actual": 1000000}
+        "chartData": [
+          {"label": "Enterprise", "value": 1000000},
+          {"label": "Commercial", "value": 750000}
         ]
       },
       {

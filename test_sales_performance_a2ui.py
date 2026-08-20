@@ -29,20 +29,7 @@ class TestSalesPerformanceA2UI(unittest.TestCase):
         "id": "content_col",
         "component": "Column",
         "children": [
-          "sales_table",
           "sales_chart"
-        ]
-      },
-      {
-        "id": "sales_table",
-        "component": "DataTable",
-        "title": "Sales Table",
-        "columns": [
-          {"key": "segment", "label": "Segment", "type": "string"},
-          {"key": "revenue", "label": "Revenue", "type": "currency"}
-        ],
-        "rows": [
-          {"segment": "Enterprise", "revenue": 1000000}
         ]
       },
       {
@@ -74,7 +61,7 @@ class TestSalesPerformanceA2UI(unittest.TestCase):
         self.assertIn("surfaceId", data["createSurface"])
         self.assertIn("catalogId", data["createSurface"])
         
-        # Verify updateComponents contains the Chart and DataTable components
+        # Verify updateComponents contains the Chart component
         update_components_part = result[1]
         data2 = update_components_part.root.data
         self.assertIn("updateComponents", data2)
@@ -83,9 +70,6 @@ class TestSalesPerformanceA2UI(unittest.TestCase):
         chart_component = next((c for c in components if c.get("component") == "Chart"), None)
         self.assertIsNotNone(chart_component)
         self.assertEqual(chart_component["type"], "bar")
-
-        table_component = next((c for c in components if c.get("component") == "DataTable"), None)
-        self.assertIsNotNone(table_component)
 
 if __name__ == '__main__':
     unittest.main()
