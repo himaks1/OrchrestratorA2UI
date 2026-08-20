@@ -31,6 +31,7 @@ from a2ui.schema.constants import VERSION_0_8, VERSION_0_9
 from a2ui.a2a.extension import get_a2ui_agent_extension
 
 from a2ui.basic_catalog.provider import BasicCatalog
+from a2ui.material_catalog.provider import MaterialCatalog
 from a2ui.schema.catalog import CatalogConfig
 from a2ui.inference_formats.direct_json import DirectJsonFormat
 from a2ui.adk.a2a.part_converter import A2uiPartConverter
@@ -65,7 +66,8 @@ def make_catalog_id_optional(schema: any) -> any:
 inference_format = DirectJsonFormat(
     version=VERSION_0_9,
     catalogs=[
-        BasicCatalog.get_config(version=VERSION_0_9)
+        BasicCatalog.get_config(version=VERSION_0_9),
+        MaterialCatalog.get_config(version=VERSION_0_9)
     ],
     schema_modifiers=[remove_strict_validation, make_catalog_id_optional],
 )
