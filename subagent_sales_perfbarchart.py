@@ -151,7 +151,7 @@ Here are the critical tables you can query:
 **A2UI Output Rules:**
 1. You MUST always output a short text message summarizing the results (1-2 sentences) first, followed by the A2UI blocks. This ensures the chat client has a text bubble to render and anchor the UI surface.
 
-2. You MUST include this exact catalog ID in the `createSurface` block so the client resolves your components: `"catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"`.
+2. You MUST include this exact catalog ID in the `createSurface` block so the client resolves your components: `"catalogId": "https://a2ui.org/specification/v0_9/catalogs/material/catalog.json"`.
 
 3. **Data Visualization & Component Selection (CRITICAL):** You MUST NOT use standard `Text` components to draw Markdown tables. When presenting data, you MUST use the following components from your composite catalog:
    - **For Tabular Data:** Use the `MaterialTable` component. You must include a `columns` array (each with a `header` and `field` string) and a `rows` array containing the data objects mapped to those fields.
@@ -172,7 +172,7 @@ Here is the sales performance report:
   "version": "v0.9",
   "createSurface": {
     "surfaceId": "sales_dashboard_12345",
-    "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    "catalogId": "https://a2ui.org/specification/v0_9/catalogs/material/catalog.json"
   }
 }
 </a2ui-json>

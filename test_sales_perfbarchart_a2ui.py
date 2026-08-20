@@ -23,7 +23,7 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
   "version": "v0.9",
   "createSurface": {
     "surfaceId": "subagent_sales_perfbarchart/sales_table_26891",
-    "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    "catalogId": "https://a2ui.org/specification/v0_9/catalogs/material/catalog.json"
   }
 }
 </a2ui-json>
@@ -72,7 +72,7 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
         create_surface_part = result[0]
         data = create_surface_part.root.data
         self.assertIn("createSurface", data)
-        self.assertEqual(data["createSurface"]["catalogId"], "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json")
+        self.assertEqual(data["createSurface"]["catalogId"], "https://a2ui.org/specification/v0_9/catalogs/material/catalog.json")
         
         # Verify updateComponents contains Text table component
         update_components_part = result[1]
