@@ -56,6 +56,29 @@ VEGA_CHART_SCHEMA = {
     "required": ["component"]
 }
 
+MATERIAL_BUTTON_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "component": {"const": "MaterialButton"},
+        "child": {"type": "string"},
+        "action": {
+            "type": "object",
+            "properties": {
+                "event": {
+                    "type": "object",
+                    "properties": {
+                        "name": {"type": "string"},
+                        "context": {"type": "object"}
+                    },
+                    "required": ["name"]
+                }
+            },
+            "required": ["event"]
+        }
+    },
+    "required": ["component", "child"]
+}
+
 def inject_material_components(schema: dict) -> dict:
     new_schema = copy.deepcopy(schema)
     if "components" not in new_schema:
@@ -65,6 +88,7 @@ def inject_material_components(schema: dict) -> dict:
     new_schema["components"]["MaterialTable"] = MATERIAL_TABLE_SCHEMA
     new_schema["components"]["MetricCard"] = METRIC_CARD_SCHEMA
     new_schema["components"]["VegaChart"] = VEGA_CHART_SCHEMA
+    new_schema["components"]["MaterialButton"] = MATERIAL_BUTTON_SCHEMA
     
     # Inject into anyComponent
     if "$defs" in new_schema and "anyComponent" in new_schema["$defs"]:
@@ -76,6 +100,8 @@ def inject_material_components(schema: dict) -> dict:
             one_of.append({"$ref": "#/components/MetricCard"})
         if not any(item.get("$ref") == "#/components/VegaChart" for item in one_of):
             one_of.append({"$ref": "#/components/VegaChart"})
+        if not any(item.get("$ref") == "#/components/MaterialButton" for item in one_of):
+            one_of.append({"$ref": "#/components/MaterialButton"})
             
     return new_schema
 
