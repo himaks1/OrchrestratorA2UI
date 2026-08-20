@@ -68,15 +68,10 @@ def main(host, port, subagent_urls):
         app = server.build()
 
         from starlette.responses import FileResponse
-        async def serve_custom_catalog(request):
-            catalog_path = os.path.join(os.path.dirname(__file__), "custom_catalog_definition.json")
+        async def serve_chart_catalog(request):
+            catalog_path = os.path.join(os.path.dirname(__file__), "chart_catalog.json")
             return FileResponse(catalog_path, media_type="application/json")
-        app.add_route("/custom_catalog_definition.json", serve_custom_catalog)
-
-        async def serve_bargraph_catalog(request):
-            catalog_path = os.path.join(os.path.dirname(__file__), "bargraph_catalog_definition.json")
-            return FileResponse(catalog_path, media_type="application/json")
-        app.add_route("/bargraph_catalog_definition.json", serve_bargraph_catalog)
+        app.add_route("/chart_catalog.json", serve_chart_catalog)
 
         app.add_middleware(
             CORSMiddleware,

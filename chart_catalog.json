@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orchestrator-agent-622946729509.us-central1.run.app/chart_catalog.json",
+  "catalogId": "https://orchestrator-agent-622946729509.us-central1.run.app/chart_catalog.json",
+  "title": "A2UI Custom Chart Catalog",
+  "description": "A custom A2UI catalog supporting VegaChart.",
+  "components": {
+    "VegaChart": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "const": "VegaChart"
+        },
+        "props": {
+          "type": "object",
+          "properties": {
+            "spec": {
+              "type": "object",
+              "description": "A valid Vega-Lite JSON specification."
+            }
+          },
+          "required": ["spec"]
+        }
+      },
+      "required": ["component"]
+    }
+  }
+}
