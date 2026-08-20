@@ -39,12 +39,14 @@ uv sync
 
 run_with_prefix "$CYAN"     "SALES ANALYST" uv run --no-sync subagent_sales_performance_analyst.py --port=10015
 run_with_prefix "$MAGENTA"  "COMPETITOR   " uv run --no-sync subagent_competitor_benchmark.py --port=10016
+run_with_prefix "$YELLOW"   "FINANCIALS   " uv run --no-sync subagent_financial_analyst.py --port=10017
 
 run_orchestrator() {
   sleep 2 && \
   uv run --no-sync . --port=10002 \
     --subagent_urls=http://localhost:10015 \
-    --subagent_urls=http://localhost:10016
+    --subagent_urls=http://localhost:10016 \
+    --subagent_urls=http://localhost:10017
 }
 run_with_prefix "$RED_BOLD" "ORCHESTRATOR" run_orchestrator
 
