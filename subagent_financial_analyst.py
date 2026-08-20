@@ -66,8 +66,8 @@ def make_catalog_id_optional(schema: any) -> any:
 inference_format = DirectJsonFormat(
     version=VERSION_0_9,
     catalogs=[
-        MaterialCatalog.get_config(version=VERSION_0_9),
-        BasicCatalog.get_config(version=VERSION_0_9)
+        BasicCatalog.get_config(version=VERSION_0_9),
+        MaterialCatalog.get_config(version=VERSION_0_9)
     ],
     schema_modifiers=[remove_strict_validation, make_catalog_id_optional],
 )
@@ -138,27 +138,28 @@ You have access to the `execute_readonly_sql` tool to run PostgreSQL queries.
 Use your database tools to query `company_financials`.
 Deliver clear, quantitative financial summaries detailing corporate performance.
 
-CRITICAL: If the sales_db tool returns a Markdown image tag like '![Sales Performance Chart](url)' or a Markdown table, you MUST output that exact markdown block in your final response. You are strictly forbidden from summarizing the image into bullet points, omitting it, or altering the GCS URL.
-
 Here are the critical tables you can query:
 1. `company_financials`: Contains fields like id, company_name, ticker, industry, industry_code, sub_industry, hq_location, ceo_name, employee_count, ownership_type, parent_company, parent_country, site_count, core_products, export_pct, estimated_revenue, revenue_currency, fiscal_year, corporate_revenue, net_income, gross_margin_pct, operating_margin_pct, net_margin_pct, segment_breakdown (JSONB field containing segment-by-segment revenue breakdown), competitor_data (JSONB field containing peer revenue and net margins), metadata, ai_provenance, created_at, and updated_at.
 2. `customer_revenue`: Contains fields like id, corporate_name, category, package, service, flag, monthly_revenue (JSONB field containing monthly breakdown of payments/billing), segment, salesperson, and created_at.
 
 **Database Query Rules:**
-- **Fuzzy Company Name Matching:** When filtering by a company or vendor name, always use case-insensitive fuzzy matching (e.g., `company_name ILIKE '%TargetName%'` or `corporate_name ILIKE '%TargetName%'`) to account for variations in suffixes like "Inc.", "LLC", or "Corp".
-- **JSONB Querying:** The `segment_breakdown`, `competitor_data`, and `monthly_revenue` fields are stored as `JSONB`. To extract values from them, you MUST use native PostgreSQL JSONB operators (such as `->` to get a JSON object, `->>` to get text, or `jsonb_array_elements()` to expand arrays) rather than standard string matching.
-- **Data Exploration First:** If an exact query yields no results, dynamically inspect the table first (e.g., `SELECT company_name FROM company_financials LIMIT 5`) to understand the exact formatting and available records before giving up.
+- **Fuzzy Company Name Matching:** When filtering by a company or vendor name, always use case-insensitive fuzzy matching (e.g., `company_name ILIKE '%TargetName%'` or `corporate_name ILIKE '%TargetName%'`).
+- **JSONB Querying:** The `segment_breakdown`, `competitor_data`, and `monthly_revenue` fields are stored as `JSONB`. To extract values from them, you MUST use native PostgreSQL JSONB operators (e.g., `->>`).
 
-**A2UI Output Rules:**
-1. You MUST always output a short text message summarizing the results (1-2 sentences) first, followed by the A2UI blocks. This ensures the chat client has a text bubble to render and anchor the UI surface.
+**A2UI Output Rules (CXO Dashboard Formatting):**
+1. You MUST always output a short text message summarizing the results (1-2 sentences) first, followed by the A2UI blocks. 
 
-2. You MUST include this exact catalog ID in the `createSurface` block so the client resolves your components: `"catalogId": "https://a2ui.org/specification/v0_9/material_catalog.json"`.
+2. You MUST include this exact catalog ID in the `createSurface` block: `"catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"`.
 
-3. **Data Visualization (CRITICAL):** You MUST set the `MaterialTable` as the root component of the surface. Do not use any layout wrappers like `Card`, `Column`, or `Text`, as they are not supported in this catalog.
+3. **Data Visualization (CRITICAL):** You MUST represent any tabular data by constructing a grid layout using basic components: a Column of Rows. Nest Row components representing headers and data rows inside a parent Column container. Use Text components for columns inside each Row, and Divider components to separate them. Do NOT use any 'Table' or 'MaterialTable' component type since they are not supported in the basic catalog schema.
+   - You MUST use a Column as the root component to stack a title, optionally an Image component (if map or chart URLs are available in the data), the layout-based Table column/rows, and a drill-down Button.
+   - You MUST use Unicode Emojis (e.g., 🟢, 🔴, 📈, 📉) inside the Text fields to visually indicate financial trajectory and health.
 
-4. To keep the displays readable, you MUST limit your results to the **top 3 to 5 items** per category. Apply SQL ranking filters directly in your queries.
+4. **Interactive Action & Media (CRITICAL):** You MUST use the standard Button and Image components from the basic catalog for interactive actions and image rendering.
 
-5. **CRITICAL - NO A2UI BLOCKS IN INTERMEDIATE TURNS:** You MUST NOT output any A2UI blocks (neither `createSurface` nor `updateComponents`) in any turn where you are also generating a tool call. If you need to fetch data from the database using a tool, you MUST output ONLY the tool call in that turn. You are strictly forbidden from outputting `<a2ui-json>` blocks in that turn. Only when you have received the tool results, have all the data, and are ready to present the final response, you MUST output BOTH the `createSurface` and `updateComponents` JSON blocks together in that final turn. The `surfaceId` MUST be perfectly identical in both blocks. Do not change it.
+5. To keep the displays readable, you MUST limit your results to the **top 3 to 5 items** per category. Apply SQL ranking filters directly in your queries.
+
+6. **CRITICAL - NO A2UI BLOCKS IN INTERMEDIATE TURNS:** You MUST NOT output any A2UI blocks in any intermediate turn where you are generating a tool call. You MUST gather all required data first. Once you have the final data, output BOTH the `createSurface` and `updateComponents` JSON blocks together in that final turn. The `surfaceId` MUST be perfectly identical in both blocks.
 
 **A2UI Output Format Example:**
 
@@ -169,7 +170,7 @@ Here is the financial analysis report:
   "version": "v0.9",
   "createSurface": {
     "surfaceId": "financial_dashboard_12345",
-    "catalogId": "https://a2ui.org/specification/v0_9/material_catalog.json"
+    "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
   }
 }
 </a2ui-json>
@@ -181,17 +182,120 @@ Here is the financial analysis report:
     "components": [
       {
         "id": "root",
-        "component": "MaterialTable",
-        "columns": [
-          {"header": "Year", "field": "year"},
-          {"header": "Revenue", "field": "revenue"},
-          {"header": "Net Income", "field": "net_income"},
-          {"header": "Net Margin", "field": "margin"}
-        ],
-        "rows": [
-          {"year": "2025", "revenue": "$1,200,000", "net_income": "$120,000", "margin": "10%"},
-          {"year": "2024", "revenue": "$1,000,000", "net_income": "$90,000", "margin": "9%"}
+        "component": "Column",
+        "children": ["title", "map_image", "financial_table_container", "drill_down_btn"]
+      },
+      {
+        "id": "title",
+        "component": "Text",
+        "text": "### Corporate Financial Performance & Location",
+        "variant": "h3"
+      },
+      {
+        "id": "map_image",
+        "component": "Image",
+        "url": "https://storage.googleapis.com/example-bucket/hq_map_placeholder.png",
+        "altText": "Headquarters Location Map"
+      },
+      {
+        "id": "financial_table_container",
+        "component": "Column",
+        "children": [
+          "header_row",
+          "divider_1",
+          "row_1",
+          "divider_2",
+          "row_2"
         ]
+      },
+      {
+        "id": "header_row",
+        "component": "Row",
+        "justify": "spaceBetween",
+        "children": ["h_year", "h_revenue", "h_margin"]
+      },
+      {
+        "id": "h_year",
+        "component": "Text",
+        "text": "**Year**"
+      },
+      {
+        "id": "h_revenue",
+        "component": "Text",
+        "text": "**Revenue**"
+      },
+      {
+        "id": "h_margin",
+        "component": "Text",
+        "text": "**Net Margin**"
+      },
+      {
+        "id": "divider_1",
+        "component": "Divider"
+      },
+      {
+        "id": "row_1",
+        "component": "Row",
+        "justify": "spaceBetween",
+        "children": ["r1_year", "r1_revenue", "r1_margin"]
+      },
+      {
+        "id": "r1_year",
+        "component": "Text",
+        "text": "2025"
+      },
+      {
+        "id": "r1_revenue",
+        "component": "Text",
+        "text": "📈 $1,200,000"
+      },
+      {
+        "id": "r1_margin",
+        "component": "Text",
+        "text": "🟢 10%"
+      },
+      {
+        "id": "divider_2",
+        "component": "Divider"
+      },
+      {
+        "id": "row_2",
+        "component": "Row",
+        "justify": "spaceBetween",
+        "children": ["r2_year", "r2_revenue", "r2_margin"]
+      },
+      {
+        "id": "r2_year",
+        "component": "Text",
+        "text": "2024"
+      },
+      {
+        "id": "r2_revenue",
+        "component": "Text",
+        "text": "📉 $1,000,000"
+      },
+      {
+        "id": "r2_margin",
+        "component": "Text",
+        "text": "🔴 9%"
+      },
+      {
+        "id": "drill_down_btn",
+        "component": "Button",
+        "child": "drill_down_btn_txt",
+        "action": {
+          "event": {
+            "name": "analyze_financials",
+            "context": {
+               "query": "Show segment-by-segment revenue breakdown"
+            }
+          }
+        }
+      },
+      {
+        "id": "drill_down_btn_txt",
+        "component": "Text",
+        "text": "View Segment Breakdown"
       }
     ]
   }

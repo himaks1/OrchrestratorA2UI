@@ -66,8 +66,8 @@ def make_catalog_id_optional(schema: any) -> any:
 inference_format = DirectJsonFormat(
     version=VERSION_0_9,
     catalogs=[
-        MaterialCatalog.get_config(version=VERSION_0_9),
-        BasicCatalog.get_config(version=VERSION_0_9)
+        BasicCatalog.get_config(version=VERSION_0_9),
+        MaterialCatalog.get_config(version=VERSION_0_9)
     ],
     schema_modifiers=[remove_strict_validation, make_catalog_id_optional],
 )
@@ -148,15 +148,23 @@ Here are the critical tables you can query:
 **Database Query Rules:**
 - **Fuzzy Company Name Matching:** When filtering by a company or vendor name, always use case-insensitive fuzzy matching (e.g., `company_name ILIKE '%TargetName%'` or `corporate_name ILIKE '%TargetName%'`) to account for variations in suffixes like "Inc.", "LLC", or "Corp".
 - **JSONB Querying:** The `segment_breakdown`, `competitor_data`, `data`, and `monthly_revenue` fields are stored as `JSONB`. To extract values from them, you MUST use native PostgreSQL JSONB operators (such as `->` to get a JSON object, `->>` to get text, or `jsonb_array_elements()` to expand arrays) rather than standard string matching.
-- **Data Exploration First:** If an exact query yields no results, dynamically inspect the table first (e.g., `SELECT company_name FROM company_financials LIMIT 5`) to understand the exact formatting and available records before giving up.
+- **Data Exploration First:** If an exact query yields no results, dynamically inspect the table first (e.g., `SELECT company_name FROM company_financials LIMIT 5` or `SELECT corporate_name FROM customer_revenue LIMIT 5`) to understand the exact formatting and available records before giving up.
 - **Product Brochure Context Search:** The `copilot_context_files` table stores training materials and brochures. Query it using file names or text snippets to ground product feature mappings.
 
-**A2UI Output Rules:**
-1. You MUST always output a short text message summarizing the results (1-2 sentences) first, followed by the A2UI blocks. This ensures the chat client has a text bubble to render and anchor the UI surface.
-2. You MUST include this exact catalog ID in the `createSurface` block so the client resolves your components: `"catalogId": "https://a2ui.org/specification/v0_9/material_catalog.json"`.
-3. **Data Visualization (CRITICAL):** You MUST set the `MaterialTable` as the root component of the surface. Do not use any layout wrappers like `Card`, `Column`, or `Text`, as they are not supported in this catalog.
-4. To keep the displays readable, you MUST limit your results to the **top 3 to 5 items** per category or recommendation list.
-5. **CRITICAL - NO A2UI BLOCKS IN INTERMEDIATE TURNS:** You MUST NOT output any A2UI blocks (neither `createSurface` nor `updateComponents`) in any turn where you are also generating a tool call. If you need to fetch data from the database using a tool, you MUST output ONLY the tool call in that turn. You are strictly forbidden from outputting `<a2ui-json>` blocks in that turn. Only when you have received the tool results, have all the data, and are ready to present the final response, you MUST output BOTH the `createSurface` and `updateComponents` JSON blocks together in that final turn. The `surfaceId` MUST be perfectly identical in both blocks. Do not change it.
+**A2UI Output Rules (CXO Dashboard Formatting):**
+1. You MUST always output a short text message summarizing the results (1-2 sentences) first, followed by the A2UI blocks. 
+
+2. You MUST include this exact catalog ID in the `createSurface` block: `"catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"`.
+
+3. **Data Visualization (CRITICAL):** You MUST represent any tabular data by constructing a grid layout using basic components: a Column of Rows. Nest Row components representing headers and data rows inside a parent Column container. Use Text components for columns inside each Row, and Divider components to separate them. Do NOT use any 'Table' or 'MaterialTable' component type since they are not supported in the basic catalog schema.
+   - You MUST use a Column as the root component to stack a title, the layout-based Table column/rows, and a drill-down Button or Modal.
+   - Use Unicode Emojis (e.g., 💡 for product, 💰 for value, 🚀 for impact) inside the Text fields to highlight key information.
+
+4. **Interactive Action & Popups (CRITICAL):** You MUST use standard Button, Image, and Modal components from the basic catalog for interactive actions and popups.
+
+5. To keep the displays readable, you MUST limit your results to the **top 3 to 5 items**. Apply SQL ranking filters.
+
+6. **CRITICAL - NO A2UI BLOCKS IN INTERMEDIATE TURNS:** You MUST NOT output any A2UI blocks in any intermediate turn where you are generating a tool call. You MUST gather all required data first. Once you have the final data, output BOTH the `createSurface` and `updateComponents` JSON blocks together in that final turn. The `surfaceId` MUST be perfectly identical in both blocks.
 
 **A2UI Output Format Example:**
 
@@ -167,7 +175,7 @@ Here is the product recommendation report:
   "version": "v0.9",
   "createSurface": {
     "surfaceId": "product_recommendation_12345",
-    "catalogId": "https://a2ui.org/specification/v0_9/material_catalog.json"
+    "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
   }
 }
 </a2ui-json>
@@ -179,16 +187,116 @@ Here is the product recommendation report:
     "components": [
       {
         "id": "root",
-        "component": "MaterialTable",
-        "columns": [
-          {"header": "Product Name", "field": "product_name"},
-          {"header": "Opportunity Value", "field": "opportunity_value"},
-          {"header": "Value Proposition / ROI", "field": "value_prop"}
-        ],
-        "rows": [
-          {"product_name": "Cloud Direct Connect", "opportunity_value": "$500,000 - $750,000", "value_prop": "Reduces network latency by 40% and provides dedicated connectivity for cloud workloads."},
-          {"product_name": "Managed Cybersecurity (SOC)", "opportunity_value": "$200,000 - $350,000", "value_prop": "24/7 security monitoring aligning with their strategic need to protect customer trust."}
+        "component": "Column",
+        "children": ["title", "product_table_container", "details_modal"]
+      },
+      {
+        "id": "title",
+        "component": "Text",
+        "text": "### Strategic Product Recommendations",
+        "variant": "h3"
+      },
+      {
+        "id": "product_table_container",
+        "component": "Column",
+        "children": [
+          "header_row",
+          "divider_1",
+          "row_1",
+          "divider_2",
+          "row_2"
         ]
+      },
+      {
+        "id": "header_row",
+        "component": "Row",
+        "justify": "spaceBetween",
+        "children": ["h_product", "h_value", "h_prop"]
+      },
+      {
+        "id": "h_product",
+        "component": "Text",
+        "text": "**Product Name**"
+      },
+      {
+        "id": "h_value",
+        "component": "Text",
+        "text": "**Opportunity Value**"
+      },
+      {
+        "id": "h_prop",
+        "component": "Text",
+        "text": "**Value Prop / ROI**"
+      },
+      {
+        "id": "divider_1",
+        "component": "Divider"
+      },
+      {
+        "id": "row_1",
+        "component": "Row",
+        "justify": "spaceBetween",
+        "children": ["r1_prod", "r1_val", "r1_prop"]
+      },
+      {
+        "id": "r1_prod",
+        "component": "Text",
+        "text": "💡 Cloud Direct Connect"
+      },
+      {
+        "id": "r1_val",
+        "component": "Text",
+        "text": "💰 $500,000"
+      },
+      {
+        "id": "r1_prop",
+        "component": "Text",
+        "text": "🚀 Reduces latency by 40%."
+      },
+      {
+        "id": "divider_2",
+        "component": "Divider"
+      },
+      {
+        "id": "row_2",
+        "component": "Row",
+        "justify": "spaceBetween",
+        "children": ["r2_prod", "r2_val", "r2_prop"]
+      },
+      {
+        "id": "r2_prod",
+        "component": "Text",
+        "text": "💡 Managed SOC"
+      },
+      {
+        "id": "r2_val",
+        "component": "Text",
+        "text": "💰 $200,000"
+      },
+      {
+        "id": "r2_prop",
+        "component": "Text",
+        "text": "🚀 24/7 security monitoring."
+      },
+      {
+        "id": "details_modal",
+        "component": "Modal",
+        "title": "Deep Dive Strategy Metrics",
+        "trigger": {
+            "component": "Button",
+            "child": "modal_btn_text"
+        },
+        "children": ["modal_text_content"]
+      },
+      {
+        "id": "modal_btn_text",
+        "component": "Text",
+        "text": "View Deep Dive Details"
+      },
+      {
+        "id": "modal_text_content",
+        "component": "Text",
+        "text": "Detailed breakdown of the client's current ICT spend and specific vulnerabilities identified in recent quarterly reports."
       }
     ]
   }

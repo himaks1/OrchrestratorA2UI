@@ -66,8 +66,8 @@ def make_catalog_id_optional(schema: any) -> any:
 inference_format = DirectJsonFormat(
     version=VERSION_0_9,
     catalogs=[
-        MaterialCatalog.get_config(version=VERSION_0_9),
-        BasicCatalog.get_config(version=VERSION_0_9)
+        BasicCatalog.get_config(version=VERSION_0_9),
+        MaterialCatalog.get_config(version=VERSION_0_9)
     ],
     schema_modifiers=[remove_strict_validation, make_catalog_id_optional],
 )
@@ -150,10 +150,11 @@ Here are the critical tables you can query:
 
 **A2UI Output Rules:**
 1. You MUST always output a short text message summarizing the results (1-2 sentences) first, followed by the A2UI blocks. This ensures the chat client has a text bubble to render and anchor the UI surface.
-2. You MUST include this exact catalog ID in the `createSurface` block so the client resolves your components: `"catalogId": "https://a2ui.org/specification/v0_9/material_catalog.json"`.
-3. **Data Visualization (CRITICAL):** You MUST set the `MaterialTable` as the root component of the surface. Do not use any layout wrappers like `Card`, `Column`, or `Text`, as they are not supported in this catalog.
-4. To keep the displays readable, you MUST limit your results to the **top 3 to 5 items** per list.
-5. **CRITICAL - NO A2UI BLOCKS IN INTERMEDIATE TURNS:** You MUST NOT output any A2UI blocks (neither `createSurface` nor `updateComponents`) in any turn where you are also generating a tool call. If you need to fetch data from the database using a tool, you MUST output ONLY the tool call in that turn. You are strictly forbidden from outputting `<a2ui-json>` blocks in that turn. Only when you have received the tool results, have all the data, and are ready to present the final response, you MUST output BOTH the `createSurface` and `updateComponents` JSON blocks together in that final turn. The `surfaceId` MUST be perfectly identical in both blocks. Do not change it.
+2. You MUST include this exact catalog ID in the `createSurface` block so the client resolves layout wrappers: `"catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"`.
+3. **Data Visualization (CRITICAL):** You MUST represent any tabular data by constructing a grid layout using basic components: a Column of Rows. Nest Row components representing headers and data rows inside a parent Column container. Use Text components for columns inside each Row, and Divider components to visually separate them. Do NOT use any 'Table' or 'MaterialTable' component type since they are not supported in the basic catalog schema.
+4. **Interactive Action (CRITICAL):** You MUST use the standard `Button` component from the basic catalog for interactive actions (e.g. drill-down analysis).
+5. To keep the displays readable, you MUST limit your results to the **top 3 to 5 items** per list.
+6. **CRITICAL - NO A2UI BLOCKS IN INTERMEDIATE TURNS:** You MUST NOT output any A2UI blocks (neither `createSurface` nor `updateComponents`) in any turn where you are also generating a tool call. If you need to fetch data from the database using a tool, you MUST output ONLY the tool call in that turn. You are strictly forbidden from outputting `<a2ui-json>` blocks in that turn. Only when you have received the tool results, have all the data, and are ready to present the final response, you MUST output BOTH the `createSurface` and `updateComponents` JSON blocks together in that final turn. The `surfaceId` MUST be perfectly identical in both blocks. Do not change it.
 
 **A2UI Output Format Example:**
 
@@ -164,7 +165,7 @@ Here is the strategic profile report:
   "version": "v0.9",
   "createSurface": {
     "surfaceId": "strategic_profile_12345",
-    "catalogId": "https://a2ui.org/specification/v0_9/material_catalog.json"
+    "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
   }
 }
 </a2ui-json>
@@ -176,15 +177,99 @@ Here is the strategic profile report:
     "components": [
       {
         "id": "root",
-        "component": "MaterialTable",
-        "columns": [
-          {"header": "Strategic Aspect", "field": "aspect"},
-          {"header": "Details / Findings", "field": "details"}
-        ],
-        "rows": [
-          {"aspect": "Strengths", "details": "Strong brand footprint and dominant market share in domestic consumer goods."},
-          {"aspect": "Challenges", "details": "High operational overhead and legacy IT footprint slowing down multi-channel integration."}
+        "component": "Column",
+        "children": ["title", "table_container", "drill_down_btn"]
+      },
+      {
+        "id": "title",
+        "component": "Text",
+        "text": "### Strategic Profile Report",
+        "variant": "h2"
+      },
+      {
+        "id": "table_container",
+        "component": "Column",
+        "children": [
+          "header_row",
+          "divider_1",
+          "row_1",
+          "divider_2",
+          "row_2"
         ]
+      },
+      {
+        "id": "header_row",
+        "component": "Row",
+        "justify": "spaceBetween",
+        "children": ["h_col1", "h_col2"]
+      },
+      {
+        "id": "h_col1",
+        "component": "Text",
+        "text": "**Strategic Aspect**"
+      },
+      {
+        "id": "h_col2",
+        "component": "Text",
+        "text": "**Details / Findings**"
+      },
+      {
+        "id": "divider_1",
+        "component": "Divider"
+      },
+      {
+        "id": "row_1",
+        "component": "Row",
+        "justify": "spaceBetween",
+        "children": ["r1_col1", "r1_col2"]
+      },
+      {
+        "id": "r1_col1",
+        "component": "Text",
+        "text": "🏆 Strengths"
+      },
+      {
+        "id": "r1_col2",
+        "component": "Text",
+        "text": "Strong brand footprint and dominant market share in domestic consumer goods."
+      },
+      {
+        "id": "divider_2",
+        "component": "Divider"
+      },
+      {
+        "id": "row_2",
+        "component": "Row",
+        "justify": "spaceBetween",
+        "children": ["r2_col1", "r2_col2"]
+      },
+      {
+        "id": "r2_col1",
+        "component": "Text",
+        "text": "⚠️ Challenges"
+      },
+      {
+        "id": "r2_col2",
+        "component": "Text",
+        "text": "High operational overhead and legacy IT footprint slowing down multi-channel integration."
+      },
+      {
+        "id": "drill_down_btn",
+        "component": "Button",
+        "child": "drill_down_btn_txt",
+        "action": {
+          "event": {
+            "name": "analyze_strategic_aspect",
+            "context": {
+               "query": "Analyze operational challenges"
+            }
+          }
+        }
+      },
+      {
+        "id": "drill_down_btn_txt",
+        "component": "Text",
+        "text": "Deep Dive Analysis"
       }
     ]
   }
