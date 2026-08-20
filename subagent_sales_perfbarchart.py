@@ -256,12 +256,15 @@ Here is the sales performance report:
         AgentSkill(
             id="sales_performance_barchart_analysis",
             name="Sales Performance BarGraph Analysis",
-            description="Analyzes revenue targets vs actuals, monthly trends, and segment performance, presenting results as interactive BarGraph components.",
-            tags=["sales", "revenue", "barchart", "performance"],
+            description="Analyzes revenue targets vs actuals, monthly trends, VP rankings, and division performance, presenting results as interactive tables.",
+            tags=["sales", "revenue", "barchart", "performance", "vps", "division"],
             examples=[
                 "Show me the sales performance for Q3 2026",
                 "What is the revenue target vs actual by division?",
-                "Which customer segments generate the most revenue?"
+                "Which customer segments generate the most revenue?",
+                "give me top performing VPs per division?",
+                "give me top performing VPs in R&E",
+                "who are the best performing VPs?"
             ],
         )
     ]
