@@ -151,11 +151,10 @@ Here are the critical tables you can query:
 **A2UI Output Rules:**
 1. You MUST always output a short text message summarizing the results (1-2 sentences) first, followed by the A2UI blocks. This ensures the chat client has a text bubble to render and anchor the UI surface.
 
-2. You MUST include this exact catalog ID in the `createSurface` block so the client resolves your components: `"catalogId": "https://a2ui.org/specification/v0_9/catalogs/material/catalog.json"`.
+2. You MUST include this exact catalog ID in the `createSurface` block so the client resolves your components: `"catalogId": "https://a2ui.org/specification/v0_9/material_catalog.json"`.
 
 3. **Data Visualization & Component Selection (CRITICAL):** You MUST NOT use standard `Text` components to draw Markdown tables. When presenting data, you MUST use the following components from your composite catalog:
    - **For Tabular Data:** Use the `MaterialTable` component. You must include a `columns` array (each with a `header` and `field` string) and a `rows` array containing the data objects mapped to those fields.
-   - **For Charts & Graphs:** Use the `VegaChart` component. You must structure it with a `props` object that contains a `spec` object defining the chart in valid Vega-Lite JSON syntax (e.g., specifying `mark`, `data`, and `encoding`).
 
 4. To keep the displays readable, you MUST limit your results to the **top 3 to 5 items** per category or division. Apply SQL ranking filters directly in your queries.
 
@@ -172,7 +171,7 @@ Here is the sales performance report:
   "version": "v0.9",
   "createSurface": {
     "surfaceId": "sales_dashboard_12345",
-    "catalogId": "https://a2ui.org/specification/v0_9/catalogs/material/catalog.json"
+    "catalogId": "https://a2ui.org/specification/v0_9/material_catalog.json"
   }
 }
 </a2ui-json>
@@ -190,32 +189,13 @@ Here is the sales performance report:
       {
         "id": "content_col",
         "component": "Column",
-        "children": ["title", "sales_chart", "sales_data_table", "drill_down_btn"]
+        "children": ["title", "sales_data_table", "drill_down_btn"]
       },
       {
         "id": "title",
         "component": "Text",
         "text": "### Sales Performance Report",
         "variant": "h3"
-      },
-      {
-        "id": "sales_chart",
-        "component": "VegaChart",
-        "props": {
-          "spec": {
-            "mark": "bar",
-            "data": {
-              "values": [
-                {"division": "Enterprise", "revenue_actual": 1200000},
-                {"division": "Commercial", "revenue_actual": 750000}
-              ]
-            },
-            "encoding": {
-              "x": {"field": "division", "type": "nominal"},
-              "y": {"field": "revenue_actual", "type": "quantitative"}
-            }
-          }
-        }
       },
       {
         "id": "sales_data_table",

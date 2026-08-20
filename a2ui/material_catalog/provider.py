@@ -125,8 +125,8 @@ class MaterialCatalog:
         modified_schema = inject_material_components(original_schema)
         
         # Set custom catalog ID
-        modified_schema["catalogId"] = "https://a2ui.org/specification/v0_9/catalogs/material/catalog.json"
-        modified_schema["$id"] = "https://a2ui.org/specification/v0_9/catalogs/material/catalog.json"
+        modified_schema["catalogId"] = "https://a2ui.org/specification/v0_9/material_catalog.json"
+        modified_schema["$id"] = "https://a2ui.org/specification/v0_9/material_catalog.json"
         
         # Re-wrap in CatalogConfig
         return CatalogConfig(
