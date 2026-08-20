@@ -67,11 +67,7 @@ def main(host, port, subagent_urls):
 
         app = server.build()
 
-        from starlette.responses import FileResponse
-        async def serve_chart_catalog(request):
-            catalog_path = os.path.join(os.path.dirname(__file__), "chart_catalog.json")
-            return FileResponse(catalog_path, media_type="application/json")
-        app.add_route("/chart_catalog.json", serve_chart_catalog)
+
 
         app.add_middleware(
             CORSMiddleware,
