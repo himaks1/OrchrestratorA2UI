@@ -29,11 +29,6 @@ from a2ui.schema.common_modifiers import remove_strict_validation
 inference_format = DirectJsonFormat(
     version=VERSION_0_9,
     catalogs=[
-        CatalogConfig.from_path(
-            name="rizzcharts",
-            catalog_path="rizzcharts_catalog_definition.json",
-            examples_path="examples/rizzcharts_catalog/0.9"
-        ),
         BasicCatalog.get_config(version=VERSION_0_9)
     ],
     schema_modifiers=[remove_strict_validation],
@@ -114,13 +109,12 @@ Here are the critical tables you can query:
 7. `sales_team_org`: Contains `employee_id`, `employee_name`, `role`, `division`, `segment`, `group_name`, `department`, `email`, `avp`, `vp`, `svp`.
 
 **A2UI Output Rule:**
-When you present data summaries, breakdowns, or visual comparisons, you MUST use the native `Chart` component (with `"type": "bar"`) defined in the catalog schema.
-Example `Chart` bar graph component:
-`{"id": "revenue_bargraph", "component": "Chart", "type": "bar", "title": "Revenue by Division", "chartData": [{"label": "Enterprise", "value": 1200000}, {"label": "Commercial", "value": 750000}]}`
+When you present data summaries, breakdowns, or visual comparisons, you MUST use native components from the basic catalog schema (`Card`, `Column`, `Row`, `Text`, `Button`).
+For data breakdowns, use formatted Markdown tables or visual metric bars inside `Text` components.
 
-**Interactivity:** You MUST include interactive UI components (such as `Button`s) below your data charts or cards to allow the user to drill down or analyze further. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`.
+**Interactivity:** You MUST include interactive UI components (such as `Button`s) below your data cards to allow the user to drill down or analyze further. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`.
 
-Set the `catalogId` to `"https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json"`.
+Set the `catalogId` to `"https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"`.
 
 Ensure the `surfaceId` is unique per response by appending a unique identifier (e.g., `sales_bargraph_<random_number>`).
 
@@ -130,7 +124,7 @@ A2UI Output format example:
   "version": "v0.9",
   "createSurface": {
     "surfaceId": "sales_bargraph_12345",
-    "catalogId": "https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json"
+    "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
   }
 }
 </a2ui-json>
@@ -148,7 +142,7 @@ A2UI Output format example:
       {
         "id": "content_col",
         "component": "Column",
-        "children": ["title", "revenue_bargraph", "drill_down_btn"]
+        "children": ["title", "revenue_summary", "drill_down_btn"]
       },
       {
         "id": "title",
@@ -157,14 +151,9 @@ A2UI Output format example:
         "variant": "h3"
       },
       {
-        "id": "revenue_bargraph",
-        "component": "Chart",
-        "type": "bar",
-        "title": "Revenue by Division",
-        "chartData": [
-          {"label": "Enterprise", "value": 1200000},
-          {"label": "Commercial", "value": 750000}
-        ]
+        "id": "revenue_summary",
+        "component": "Text",
+        "text": "| Division | Revenue ($) | Share |\n|---|---|---|\n| **Enterprise** | $1,200,000 | 61.5% |\n| **Commercial** | $750,000 | 38.5% |"
       },
       {
         "id": "drill_down_btn",
@@ -214,7 +203,7 @@ A2UI Output format example:
         get_a2ui_agent_extension(
             VERSION_0_9,
             False,
-            ["https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json"]
+            ["https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"]
         ),
     ]
 

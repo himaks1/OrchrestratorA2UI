@@ -5,14 +5,14 @@ from subagent_sales_perfbarchart import a2ui_converter, my_catalog
 class TestSalesPerfBarChartA2UI(unittest.TestCase):
 
     def test_bargraph_output_conversion(self):
-        """Test parsing and conversion of BarGraph A2UI surface payload."""
+        """Test parsing and conversion of Basic Catalog A2UI surface payload."""
         text = """
 <a2ui-json>
 {
   "version": "v0.9",
   "createSurface": {
     "surfaceId": "subagent_sales_perfbarchart/sales_bargraph_26891",
-    "catalogId": "https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json"
+    "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
   }
 }
 </a2ui-json>
@@ -32,7 +32,7 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
         "component": "Column",
         "children": [
           "title",
-          "sales_bargraph"
+          "revenue_summary"
         ]
       },
       {
@@ -42,20 +42,9 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
         "variant": "h3"
       },
       {
-        "id": "sales_bargraph",
-        "component": "Chart",
-        "type": "bar",
-        "title": "Revenue Performance",
-        "chartData": [
-          {
-            "label": "Enterprise",
-            "value": 1200000.0
-          },
-          {
-            "label": "Commercial",
-            "value": 750000.0
-          }
-        ]
+        "id": "revenue_summary",
+        "component": "Text",
+        "text": "Division: Enterprise - Revenue: $1,200,000"
       }
     ]
   }
@@ -71,18 +60,17 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
         create_surface_part = result[0]
         data = create_surface_part.root.data
         self.assertIn("createSurface", data)
-        self.assertEqual(data["createSurface"]["catalogId"], "https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json")
+        self.assertEqual(data["createSurface"]["catalogId"], "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json")
         
-        # Verify updateComponents contains the Chart component
+        # Verify updateComponents contains Text component
         update_components_part = result[1]
         data2 = update_components_part.root.data
         self.assertIn("updateComponents", data2)
         
         components = data2["updateComponents"]["components"]
-        bargraph_component = next((c for c in components if c.get("component") == "Chart"), None)
-        self.assertIsNotNone(bargraph_component)
-        self.assertEqual(bargraph_component["type"], "bar")
-        self.assertEqual(len(bargraph_component["chartData"]), 2)
+        text_component = next((c for c in components if c.get("id") == "revenue_summary"), None)
+        self.assertIsNotNone(text_component)
+        self.assertIn("Enterprise", text_component["text"])
 
     def test_bargraph_interactive_button_action(self):
         """Test drill-down button with event context payload."""
@@ -92,7 +80,7 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
   "version": "v0.9",
   "createSurface": {
     "surfaceId": "subagent_sales_perfbarchart/sales_bargraph_999",
-    "catalogId": "https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json"
+    "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
   }
 }
 </a2ui-json>
@@ -110,16 +98,12 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
       {
         "id": "content_col",
         "component": "Column",
-        "children": ["sales_bargraph", "drill_down_btn"]
+        "children": ["title", "drill_down_btn"]
       },
       {
-        "id": "sales_bargraph",
-        "component": "Chart",
-        "type": "bar",
-        "title": "Segment Performance",
-        "chartData": [
-          {"label": "Enterprise", "value": 500000}
-        ]
+        "id": "title",
+        "component": "Text",
+        "text": "Segment Performance"
       },
       {
         "id": "drill_down_btn",
@@ -156,14 +140,14 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
         self.assertEqual(button["action"]["event"]["context"]["query"], "Show Enterprise segment breakdown")
 
     def test_invalid_component_rejection(self):
-        """Verify that components not defined in bargraph_catalog_definition.json are rejected by converter."""
+        """Verify that invalid component types are rejected by converter."""
         invalid_text = """
 <a2ui-json>
 {
   "version": "v0.9",
   "createSurface": {
     "surfaceId": "subagent_sales_perfbarchart/test_invalid",
-    "catalogId": "https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json"
+    "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
   }
 }
 </a2ui-json>
