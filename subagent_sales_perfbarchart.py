@@ -123,7 +123,8 @@ Here are the critical tables you can query:
 7. `sales_team_org`: Contains `employee_id`, `employee_name`, `role`, `division`, `segment`, `group_name`, `department`, `email`, `avp`, `vp`, `svp`.
 
 **A2UI Output Rule:**
-When you present data summaries, breakdowns, or visual comparisons, you MUST use the native `VegaChart` component defined in the catalog schema with an embedded Vega-Lite specification in `props.spec`.
+1. When you present data summaries, breakdowns, or visual comparisons, you MUST use the native `VegaChart` component defined in the catalog schema with an embedded Vega-Lite specification in `props.spec`.
+2. To keep the visual charts readable and prevent payload/token overflows, you MUST limit your chart data to the **top 3 to 5 items** per category or division (e.g. top performing VPs, top customer segments). Apply SQL ranking filters (like `ROW_NUMBER() OVER (PARTITION BY ... ORDER BY ... DESC) <= 3`) directly in your queries so you only fetch and plot the most relevant top performers. Do NOT attempt to plot dozens of individual data points on a single chart.
 
 **Interactivity:** You MUST include interactive UI components (such as `Button`s) below your data charts or cards to allow the user to drill down or analyze further. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`.
 
