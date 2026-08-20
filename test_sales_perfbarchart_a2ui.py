@@ -1,5 +1,16 @@
 import unittest
 from google.genai.types import Part
+
+# Monkeypatch A2UI core schema to make catalogId optional (required for unified composite catalog support)
+from a2ui.core.schema.server_to_client import CreateSurface, CreateSurfaceMessage, A2uiMessageListWrapper
+field_info = CreateSurface.model_fields.get("catalog_id")
+if field_info:
+    field_info.default = None
+    CreateSurface.model_fields["catalog_id"] = field_info
+    CreateSurface.model_rebuild(force=True)
+    CreateSurfaceMessage.model_rebuild(force=True)
+    A2uiMessageListWrapper.model_rebuild(force=True)
+
 from subagent_sales_perfbarchart import a2ui_converter, my_catalog
 
 class TestSalesPerfBarChartA2UI(unittest.TestCase):
@@ -11,8 +22,7 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
 {
   "version": "v0.9",
   "createSurface": {
-    "surfaceId": "subagent_sales_perfbarchart/sales_bargraph_26891",
-    "catalogId": "https://a2ui.org/specification/v0_9/ge_composite_catalog.json"
+    "surfaceId": "subagent_sales_perfbarchart/sales_bargraph_26891"
   }
 }
 </a2ui-json>
@@ -76,7 +86,7 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
         create_surface_part = result[0]
         data = create_surface_part.root.data
         self.assertIn("createSurface", data)
-        self.assertEqual(data["createSurface"]["catalogId"], "https://a2ui.org/specification/v0_9/ge_composite_catalog.json")
+        self.assertNotIn("catalogId", data["createSurface"])
         
         # Verify updateComponents contains VegaChart component
         update_components_part = result[1]
@@ -96,8 +106,7 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
 {
   "version": "v0.9",
   "createSurface": {
-    "surfaceId": "subagent_sales_perfbarchart/sales_bargraph_999",
-    "catalogId": "https://a2ui.org/specification/v0_9/ge_composite_catalog.json"
+    "surfaceId": "subagent_sales_perfbarchart/sales_bargraph_999"
   }
 }
 </a2ui-json>
@@ -163,8 +172,7 @@ class TestSalesPerfBarChartA2UI(unittest.TestCase):
 {
   "version": "v0.9",
   "createSurface": {
-    "surfaceId": "subagent_sales_perfbarchart/test_invalid",
-    "catalogId": "https://a2ui.org/specification/v0_9/ge_composite_catalog.json"
+    "surfaceId": "subagent_sales_perfbarchart/test_invalid"
   }
 }
 </a2ui-json>

@@ -1,3 +1,13 @@
+# Monkeypatch A2UI core schema to make catalogId optional (required for unified composite catalog support)
+from a2ui.core.schema.server_to_client import CreateSurface, CreateSurfaceMessage, A2uiMessageListWrapper
+field_info = CreateSurface.model_fields.get("catalog_id")
+if field_info:
+    field_info.default = None
+    CreateSurface.model_fields["catalog_id"] = field_info
+    CreateSurface.model_rebuild(force=True)
+    CreateSurfaceMessage.model_rebuild(force=True)
+    A2uiMessageListWrapper.model_rebuild(force=True)
+
 import logging
 import os
 import click
@@ -40,12 +50,24 @@ def add_vega_chart(schema: dict) -> dict:
             schema["$defs"]["anyComponent"]["oneOf"].append({"$ref": "#/components/VegaChart"})
     return schema
 
+def make_catalog_id_optional(schema: any) -> any:
+    if isinstance(schema, dict):
+        new_schema = {k: make_catalog_id_optional(v) for k, v in schema.items()}
+        if "createSurface" in new_schema and "required" in new_schema["createSurface"]:
+            reqs = new_schema["createSurface"]["required"]
+            if "catalogId" in reqs:
+                new_schema["createSurface"]["required"] = [r for r in reqs if r != "catalogId"]
+        return new_schema
+    elif isinstance(schema, list):
+        return [make_catalog_id_optional(item) for item in schema]
+    return schema
+
 inference_format = DirectJsonFormat(
     version=VERSION_0_9,
     catalogs=[
         BasicCatalog.get_config(version=VERSION_0_9)
     ],
-    schema_modifiers=[remove_strict_validation, add_vega_chart],
+    schema_modifiers=[remove_strict_validation, add_vega_chart, make_catalog_id_optional],
 )
 my_catalog = inference_format.get_selected_catalog()
 a2ui_converter = A2uiPartConverter(a2ui_catalog=my_catalog, version=VERSION_0_9)
@@ -128,8 +150,6 @@ Here are the critical tables you can query:
 
 **Interactivity:** You MUST include interactive UI components (such as `Button`s) below your data charts or cards to allow the user to drill down or analyze further. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`.
 
-Set the `catalogId` to `"https://a2ui.org/specification/v0_9/ge_composite_catalog.json"`.
-
 Ensure the `surfaceId` is unique per response by appending a unique identifier (e.g., `sales_bargraph_<random_number>`).
 
 A2UI Output format example:
@@ -137,8 +157,7 @@ A2UI Output format example:
 {
   "version": "v0.9",
   "createSurface": {
-    "surfaceId": "sales_bargraph_12345",
-    "catalogId": "https://a2ui.org/specification/v0_9/ge_composite_catalog.json"
+    "surfaceId": "sales_bargraph_12345"
   }
 }
 </a2ui-json>
@@ -233,7 +252,7 @@ A2UI Output format example:
         get_a2ui_agent_extension(
             VERSION_0_9,
             False,
-            ["https://a2ui.org/specification/v0_9/ge_composite_catalog.json"]
+            []
         ),
     ]
 

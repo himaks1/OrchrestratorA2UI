@@ -79,6 +79,16 @@ from a2ui.schema.constants import (
 
 from a2ui.adk.orchestration.a2ui_subagent_map import A2uiSubagentMap, SurfaceIdAlreadyExistsError
 
+# Monkeypatch A2UI core schema to make catalogId optional (required for unified composite catalog support)
+from a2ui.core.schema.server_to_client import CreateSurface, CreateSurfaceMessage, A2uiMessageListWrapper
+field_info = CreateSurface.model_fields.get("catalog_id")
+if field_info:
+    field_info.default = None
+    CreateSurface.model_fields["catalog_id"] = field_info
+    CreateSurface.model_rebuild(force=True)
+    CreateSurfaceMessage.model_rebuild(force=True)
+    A2uiMessageListWrapper.model_rebuild(force=True)
+
 logger = logging.getLogger(__name__)
 
 ACTIVE_UI_VERSION_STATE_KEY = "active_ui_version"
