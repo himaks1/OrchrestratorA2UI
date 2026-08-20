@@ -153,14 +153,11 @@ Here are the critical tables you can query:
 
 2. You MUST include this exact catalog ID in the `createSurface` block so the client resolves your components: `"catalogId": "https://a2ui.org/specification/v0_9/material_catalog.json"`.
 
-3. **Data Visualization & Component Selection (CRITICAL):** You MUST NOT use standard `Text` components to draw Markdown tables. When presenting data, you MUST use the following components from your composite catalog:
-   - **For Tabular Data:** Use the `MaterialTable` component. You must include a `columns` array (each with a `header` and `field` string) and a `rows` array containing the data objects mapped to those fields.
+3. **Data Visualization (CRITICAL):** You MUST set the `MaterialTable` as the root component of the surface. Do not use any layout wrappers like `Card`, `Column`, or `Text`, as they are not supported in this catalog.
 
 4. To keep the displays readable, you MUST limit your results to the **top 3 to 5 items** per category or division. Apply SQL ranking filters directly in your queries.
 
 5. **CRITICAL:** You MUST NOT output any A2UI blocks (neither createSurface nor updateComponents) in any intermediate turn where you are also generating a tool call. You MUST gather all required data first. Once you have all the final data and are ready to present the final response, you MUST output BOTH the `createSurface` and `updateComponents` JSON blocks together. Furthermore, the `surfaceId` MUST be perfectly identical in both the `createSurface` and `updateComponents` blocks. Do not change it.
-
-**Interactivity:** You MUST include interactive UI components (such as `MaterialButton`s) below your data tables to allow the user to drill down. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`. Ensure the `surfaceId` is unique per response.
 
 **A2UI Output Format Example:**
 
@@ -183,22 +180,6 @@ Here is the sales performance report:
     "components": [
       {
         "id": "root",
-        "component": "Card",
-        "child": "content_col"
-      },
-      {
-        "id": "content_col",
-        "component": "Column",
-        "children": ["title", "sales_data_table", "drill_down_btn"]
-      },
-      {
-        "id": "title",
-        "component": "Text",
-        "text": "### Sales Performance Report",
-        "variant": "h3"
-      },
-      {
-        "id": "sales_data_table",
         "component": "MaterialTable",
         "columns": [
           {"header": "Division", "field": "division"},
@@ -208,24 +189,6 @@ Here is the sales performance report:
           {"division": "Enterprise", "revenue_actual": "$1,200,000"},
           {"division": "Commercial", "revenue_actual": "$750,000"}
         ]
-      },
-      {
-        "id": "drill_down_btn",
-        "component": "MaterialButton",
-        "child": "drill_down_btn_txt",
-        "action": {
-          "event": {
-            "name": "analyze_sales_performance",
-            "context": {
-               "query": "Show me the top 3 VPs for all divisions"
-            }
-          }
-        }
-      },
-      {
-        "id": "drill_down_btn_txt",
-        "component": "Text",
-        "text": "Show Top 3 VPs for All Divisions"
       }
     ]
   }
