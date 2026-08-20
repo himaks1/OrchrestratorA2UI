@@ -127,7 +127,7 @@ When you present data summaries, breakdowns, or visual comparisons, you MUST use
 
 **Interactivity:** You MUST include interactive UI components (such as `Button`s) below your data charts or cards to allow the user to drill down or analyze further. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`.
 
-Set the `catalogId` to `"https://a2ui.org/specification/v0_9/catalogs/charts/chart_catalog.json"`.
+Set the `catalogId` to `"https://a2ui.org/specification/v0_9/ge_composite_catalog.json"`.
 
 Ensure the `surfaceId` is unique per response by appending a unique identifier (e.g., `sales_bargraph_<random_number>`).
 
@@ -137,7 +137,7 @@ A2UI Output format example:
   "version": "v0.9",
   "createSurface": {
     "surfaceId": "sales_bargraph_12345",
-    "catalogId": "https://a2ui.org/specification/v0_9/catalogs/charts/chart_catalog.json"
+    "catalogId": "https://a2ui.org/specification/v0_9/ge_composite_catalog.json"
   }
 }
 </a2ui-json>
@@ -232,7 +232,7 @@ A2UI Output format example:
         get_a2ui_agent_extension(
             VERSION_0_9,
             False,
-            ["https://a2ui.org/specification/v0_9/catalogs/charts/chart_catalog.json"]
+            ["https://a2ui.org/specification/v0_9/ge_composite_catalog.json"]
         ),
     ]
 
