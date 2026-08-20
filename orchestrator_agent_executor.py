@@ -392,8 +392,8 @@ class OrchestratorAgentExecutor(A2aAgentExecutor):
         ]
 
         agent_card = AgentCard(
-            name="Orchestrator Agent",
-            description="This agent orchestrates requests to multiple subagents.",
+            name="Ollie",
+            description="Ollie, the Master Sales Assistant Orchestrator for Enterprise B2B Sales.",
             url=base_url,
             version="1.0.0",
             default_input_modes=["text", "text/plain"],
