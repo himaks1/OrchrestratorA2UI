@@ -5,10 +5,10 @@ from a2ui.schema.catalog import CatalogConfig
 from a2ui.schema.catalog_provider import A2uiCatalogProvider
 
 # Component schemas to inject
-DATATABLE_SCHEMA = {
+MATERIAL_TABLE_SCHEMA = {
     "type": "object",
     "properties": {
-        "component": {"const": "DataTable"},
+        "component": {"const": "MaterialTable"},
         "title": {"type": "string"},
         "pageSize": {"type": "integer"},
         "sortable": {"type": "boolean"},
@@ -17,11 +17,10 @@ DATATABLE_SCHEMA = {
             "items": {
                 "type": "object",
                 "properties": {
-                    "key": {"type": "string"},
-                    "label": {"type": "string"},
-                    "type": {"type": "string", "enum": ["string", "number", "currency"]}
+                    "field": {"type": "string"},
+                    "header": {"type": "string"}
                 },
-                "required": ["key", "label"]
+                "required": ["field", "header"]
             }
         },
         "rows": {
@@ -63,7 +62,7 @@ def inject_material_components(schema: dict) -> dict:
         new_schema["components"] = {}
         
     # Inject components
-    new_schema["components"]["DataTable"] = DATATABLE_SCHEMA
+    new_schema["components"]["MaterialTable"] = MATERIAL_TABLE_SCHEMA
     new_schema["components"]["MetricCard"] = METRIC_CARD_SCHEMA
     new_schema["components"]["VegaChart"] = VEGA_CHART_SCHEMA
     
@@ -71,8 +70,8 @@ def inject_material_components(schema: dict) -> dict:
     if "$defs" in new_schema and "anyComponent" in new_schema["$defs"]:
         one_of = new_schema["$defs"]["anyComponent"]["oneOf"]
         # Add if not already present
-        if not any(item.get("$ref") == "#/components/DataTable" for item in one_of):
-            one_of.append({"$ref": "#/components/DataTable"})
+        if not any(item.get("$ref") == "#/components/MaterialTable" for item in one_of):
+            one_of.append({"$ref": "#/components/MaterialTable"})
         if not any(item.get("$ref") == "#/components/MetricCard" for item in one_of):
             one_of.append({"$ref": "#/components/MetricCard"})
         if not any(item.get("$ref") == "#/components/VegaChart" for item in one_of):

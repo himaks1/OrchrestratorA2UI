@@ -148,9 +148,11 @@ Here are the critical tables you can query:
 
 **A2UI Output Rule:**
 1. You MUST always output a short text message summarizing the results (1-2 sentences) first, followed by the A2UI blocks. This ensures the chat client has a text bubble to render and anchor the UI surface.
-2. You MUST use the official Basic Catalog ID in the `catalogId` field of `createSurface` so the client frontend resolves the schema natively: `"catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"`.
-3. When you present data summaries, breakdowns, or visual comparisons, you MUST use a standard `Text` component to display a formatted Markdown Table (e.g. headers, columns, values). Do NOT use any custom chart or graph components.
-4. To keep the tables readable, you MUST limit your results to the **top 3 to 5 items** per category or division (e.g. top performing VPs, top customer segments). Apply SQL ranking filters (like `ROW_NUMBER() OVER (PARTITION BY ... ORDER BY ... DESC) <= 3`) directly in your queries.
+2. You MUST omit the `catalogId` field entirely from the `createSurface` block. The client frontend automatically resolves the composite schema (Basic + Material + Custom) natively.
+3. When presenting data, you MUST NOT use standard `Text` components to draw Markdown tables. Instead, you MUST use:
+   - **For Tabular Data:** Use the `MaterialTable` component. You must include a `columns` array (each with a `header` and `field` string) and a `rows` array containing the data objects mapped to those fields.
+   - **For Charts & Graphs:** Use the `VegaChart` component. You must structure it with a `props` object that contains a `spec` object defining the chart in valid Vega-Lite JSON syntax (e.g., specifying `mark`, `data`, and `encoding`).
+4. To keep the displays readable, you MUST limit your results to the **top 3 to 5 items** per category or division (e.g. top performing VPs, top customer segments). Apply SQL ranking filters (like `ROW_NUMBER() OVER (PARTITION BY ... ORDER BY ... DESC) <= 3`) directly in your queries.
 5. **CRITICAL:** You MUST NOT output any A2UI blocks (neither createSurface nor updateComponents) in any intermediate turn where you are also generating a tool call (such as execute_readonly_sql). You MUST gather all required data first. Once you have all the final data and are ready to present the final response, you MUST output BOTH the `createSurface` and `updateComponents` JSON blocks together in that final response.
 
 **Interactivity:** You MUST include interactive UI components (such as `Button`s) below your data tables or cards to allow the user to drill down or analyze further. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`.
@@ -163,8 +165,7 @@ Here is the sales performance report:
 {
   "version": "v0.9",
   "createSurface": {
-    "surfaceId": "sales_table_12345",
-    "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    "surfaceId": "sales_table_12345"
   }
 }
 </a2ui-json>
@@ -192,9 +193,15 @@ Here is the sales performance report:
       },
       {
         "id": "sales_data_table",
-        "component": "Text",
-        "text": "| Division | Revenue YTD Target | Revenue YTD Actual | Achievement % |\n|---|---|---|---|\n| Enterprise | $1,500,000 | $1,200,000 | 80% |\n| Commercial | $800,000 | $750,000 | 93.7% |",
-        "variant": "body"
+        "component": "MaterialTable",
+        "columns": [
+          {"header": "Division", "field": "division"},
+          {"header": "Revenue YTD Actual", "field": "revenue_actual"}
+        ],
+        "rows": [
+          {"division": "Enterprise", "revenue_actual": "$1,200,000"},
+          {"division": "Commercial", "revenue_actual": "$750,000"}
+        ]
       },
       {
         "id": "drill_down_btn",
@@ -204,7 +211,7 @@ Here is the sales performance report:
           "event": {
             "name": "analyze_sales_performance",
             "context": {
-               "query": "Show me a detailed breakdown for the Enterprise segment"
+               "query": "Show me the top 3 VPs for all divisions"
             }
           }
         }
@@ -212,7 +219,7 @@ Here is the sales performance report:
       {
         "id": "drill_down_btn_txt",
         "component": "Text",
-        "text": "Analyze Details"
+        "text": "Show Top 3 VPs for All Divisions"
       }
     ]
   }
