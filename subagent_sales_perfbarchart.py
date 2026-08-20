@@ -151,7 +151,7 @@ Here are the critical tables you can query:
 **A2UI Output Rules:**
 1. You MUST always output a short text message summarizing the results (1-2 sentences) first, followed by the A2UI blocks. This ensures the chat client has a text bubble to render and anchor the UI surface.
 
-2. You MUST omit the `catalogId` field entirely from the `createSurface` block. The client frontend automatically resolves the composite schema (Basic + Material + Custom) natively.
+2. You MUST include this exact catalog ID in the `createSurface` block so the client resolves your components: `"catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"`.
 
 3. **Data Visualization & Component Selection (CRITICAL):** You MUST NOT use standard `Text` components to draw Markdown tables. When presenting data, you MUST use the following components from your composite catalog:
    - **For Tabular Data:** Use the `MaterialTable` component. You must include a `columns` array (each with a `header` and `field` string) and a `rows` array containing the data objects mapped to those fields.
@@ -159,7 +159,7 @@ Here are the critical tables you can query:
 
 4. To keep the displays readable, you MUST limit your results to the **top 3 to 5 items** per category or division. Apply SQL ranking filters directly in your queries.
 
-5. **CRITICAL:** You MUST NOT output any A2UI blocks (neither createSurface nor updateComponents) in any intermediate turn where you are also generating a tool call. You MUST gather all required data first. Once you have all the final data and are ready to present the final response, you MUST output BOTH the `createSurface` and `updateComponents` JSON blocks together.
+5. **CRITICAL:** You MUST NOT output any A2UI blocks (neither createSurface nor updateComponents) in any intermediate turn where you are also generating a tool call. You MUST gather all required data first. Once you have all the final data and are ready to present the final response, you MUST output BOTH the `createSurface` and `updateComponents` JSON blocks together. Furthermore, the `surfaceId` MUST be perfectly identical in both the `createSurface` and `updateComponents` blocks. Do not change it.
 
 **Interactivity:** You MUST include interactive UI components (such as `MaterialButton`s) below your data tables to allow the user to drill down. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`. Ensure the `surfaceId` is unique per response.
 
@@ -171,7 +171,8 @@ Here is the sales performance report:
 {
   "version": "v0.9",
   "createSurface": {
-    "surfaceId": "sales_dashboard_12345"
+    "surfaceId": "sales_dashboard_12345",
+    "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
   }
 }
 </a2ui-json>
