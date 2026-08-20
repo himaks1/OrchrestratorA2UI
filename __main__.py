@@ -20,7 +20,7 @@ import click
 from a2a.server.apps import A2AStarletteApplication
 from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryTaskStore
-from orchestrator_agent_executor import OrchestratorAgentExecutor
+from ollie_agent import OrchestratorAgentExecutor
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 
