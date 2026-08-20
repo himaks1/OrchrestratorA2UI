@@ -41,7 +41,7 @@ run_with_prefix "$BLUE"     "FRONT DESK  " uv run --no-sync subagent_front_desk.
 run_with_prefix "$MAGENTA"  "HOUSEKEEPING" uv run --no-sync subagent_housekeeping.py --port=10012
 run_with_prefix "$YELLOW"   "MAINTENANCE " uv run --no-sync subagent_maintenance.py --port=10013
 run_with_prefix "$GREEN"    "ROOM SERVICE" uv run --no-sync subagent_room_service.py --port=10014
-run_with_prefix "$CYAN"     "SALES ANALYST" uv run --no-sync subagent_sales_performance_analyst.py --port=10015
+run_with_prefix "$CYAN"     "SALES ANALYST" uv run --no-sync subagent_sales_perfbarchart.py --port=10015
 
 run_orchestrator() {
   sleep 2 && \

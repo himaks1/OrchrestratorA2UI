@@ -73,6 +73,11 @@ def main(host, port, subagent_urls):
             return FileResponse(catalog_path, media_type="application/json")
         app.add_route("/custom_catalog_definition.json", serve_custom_catalog)
 
+        async def serve_bargraph_catalog(request):
+            catalog_path = os.path.join(os.path.dirname(__file__), "bargraph_catalog_definition.json")
+            return FileResponse(catalog_path, media_type="application/json")
+        app.add_route("/bargraph_catalog_definition.json", serve_bargraph_catalog)
+
         app.add_middleware(
             CORSMiddleware,
             allow_origins=["*"],

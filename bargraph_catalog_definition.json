@@ -1,0 +1,337 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2ui.org/catalogs/bargraph/0.9/bargraph_catalog_definition.json",
+  "catalogId": "https://a2ui.org/catalogs/bargraph/0.9/bargraph_catalog_definition.json",
+  "title": "Standalone BarGraph & Layout Catalog (A2UI v0.9)",
+  "description": "A self-contained A2UI v0.9 catalog supporting BarGraph visualization, interactive drill-down buttons, and container components.",
+  "components": {
+    "Text": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "Text" },
+            "text": {
+              "$ref": "#/$defs/DynamicString",
+              "description": "Text content to display. Supports markdown formatting."
+            },
+            "variant": {
+              "type": "string",
+              "enum": ["h1", "h2", "h3", "h4", "h5", "caption", "body"],
+              "default": "body"
+            }
+          },
+          "required": ["component", "text"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "Card": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "Card" },
+            "child": {
+              "$ref": "#/$defs/ComponentId",
+              "description": "ID of the single child component inside the card."
+            }
+          },
+          "required": ["component", "child"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "Column": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "Column" },
+            "children": { "$ref": "#/$defs/ChildList" },
+            "align": {
+              "type": "string",
+              "enum": ["start", "center", "end", "stretch"],
+              "default": "stretch"
+            }
+          },
+          "required": ["component", "children"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "Row": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "Row" },
+            "children": { "$ref": "#/$defs/ChildList" },
+            "justify": {
+              "type": "string",
+              "enum": ["start", "center", "end", "spaceBetween", "spaceAround", "spaceEvenly"],
+              "default": "start"
+            },
+            "align": {
+              "type": "string",
+              "enum": ["start", "center", "end", "stretch"],
+              "default": "center"
+            }
+          },
+          "required": ["component", "children"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "Button": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "Button" },
+            "child": { "$ref": "#/$defs/ComponentId" },
+            "variant": {
+              "type": "string",
+              "enum": ["default", "primary", "borderless"],
+              "default": "primary"
+            },
+            "action": { "$ref": "#/$defs/Action" }
+          },
+          "required": ["component", "child"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "Divider": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "Divider" }
+          },
+          "required": ["component"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "BarGraph": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
+        {
+          "type": "object",
+          "description": "Interactive BarGraph component supporting vertical/horizontal orientations, group categories, and drill-down data.",
+          "properties": {
+            "component": { "const": "BarGraph" },
+            "title": {
+              "$ref": "#/$defs/DynamicString",
+              "description": "Main title displayed above the bar graph."
+            },
+            "subtitle": {
+              "$ref": "#/$defs/DynamicString",
+              "description": "Optional secondary title text."
+            },
+            "orientation": {
+              "type": "string",
+              "enum": ["vertical", "horizontal"],
+              "default": "vertical",
+              "description": "Direction of the bars."
+            },
+            "stacked": {
+              "type": "boolean",
+              "default": false,
+              "description": "Whether to stack series bars."
+            },
+            "showLegend": {
+              "type": "boolean",
+              "default": true
+            },
+            "xAxis": { "$ref": "#/$defs/AxisConfig" },
+            "yAxis": { "$ref": "#/$defs/AxisConfig" },
+            "data": {
+              "description": "Array of data points for each bar.",
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": { "$ref": "#/$defs/BarGraphItem" }
+                },
+                { "$ref": "#/$defs/DataBinding" }
+              ]
+            }
+          },
+          "required": ["component", "data"]
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  },
+  "$defs": {
+    "ComponentId": {
+      "type": "string",
+      "description": "Unique identifier for a component within a surface."
+    },
+    "CatalogComponentCommon": {
+      "type": "object",
+      "properties": {
+        "weight": { "$ref": "#/$defs/DynamicNumber" }
+      }
+    },
+    "ComponentCommon": {
+      "type": "object",
+      "properties": {
+        "id": { "$ref": "#/$defs/ComponentId" },
+        "accessibility": { "$ref": "#/$defs/AccessibilityAttributes" }
+      },
+      "required": ["id"]
+    },
+    "AccessibilityAttributes": {
+      "type": "object",
+      "properties": {
+        "label": { "$ref": "#/$defs/DynamicString" },
+        "description": { "$ref": "#/$defs/DynamicString" }
+      }
+    },
+    "ChildList": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ComponentId" }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "componentId": { "$ref": "#/$defs/ComponentId" },
+            "path": { "type": "string" }
+          },
+          "required": ["componentId", "path"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "DataBinding": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "JSON Pointer path to a value in the data model."
+        }
+      },
+      "required": ["path"],
+      "additionalProperties": false
+    },
+    "DynamicValue": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "number" },
+        { "type": "boolean" },
+        { "type": "array" },
+        { "$ref": "#/$defs/DataBinding" }
+      ]
+    },
+    "DynamicString": {
+      "oneOf": [
+        { "type": "string" },
+        { "$ref": "#/$defs/DataBinding" }
+      ]
+    },
+    "DynamicNumber": {
+      "oneOf": [
+        { "type": "number" },
+        { "$ref": "#/$defs/DataBinding" }
+      ]
+    },
+    "DynamicBoolean": {
+      "oneOf": [
+        { "type": "boolean" },
+        { "$ref": "#/$defs/DataBinding" }
+      ]
+    },
+    "AxisConfig": {
+      "type": "object",
+      "properties": {
+        "label": { "type": "string" },
+        "key": { "type": "string" },
+        "format": {
+          "type": "string",
+          "enum": ["number", "currency", "percent"],
+          "default": "number"
+        }
+      }
+    },
+    "BarGraphItem": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Label for the bar (e.g. 'Enterprise', 'Q1')."
+        },
+        "value": {
+          "type": "number",
+          "description": "Numeric value representing bar height/length."
+        },
+        "category": {
+          "type": "string",
+          "description": "Optional category for grouping or coloring."
+        },
+        "color": {
+          "type": "string",
+          "description": "Optional custom hex/RGB color string for the bar."
+        },
+        "drillDown": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": { "type": "string" },
+              "value": { "type": "number" }
+            },
+            "required": ["label", "value"]
+          }
+        }
+      },
+      "required": ["label", "value"]
+    },
+    "Action": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "event": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "context": {
+                  "type": "object",
+                  "additionalProperties": { "$ref": "#/$defs/DynamicValue" }
+                }
+              },
+              "required": ["name"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["event"],
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}

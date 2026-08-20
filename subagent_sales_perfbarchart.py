@@ -30,9 +30,8 @@ inference_format = DirectJsonFormat(
     version=VERSION_0_9,
     catalogs=[
         CatalogConfig.from_path(
-            name="rizzcharts",
-            catalog_path="rizzcharts_catalog_definition.json",
-            examples_path="examples/rizzcharts_catalog/0.9"
+            name="bargraph_catalog",
+            catalog_path="bargraph_catalog_definition.json"
         ),
         BasicCatalog.get_config(version=VERSION_0_9)
     ],
@@ -95,8 +94,8 @@ def execute_readonly_sql(query: str) -> str:
 def main(host, port):
     lite_llm_model = os.getenv("LITELLM_MODEL", "gemini/gemini-3.5-flash")
     agent = LlmAgent(
-        name="subagent_sales_performance_analyst",
-        description="Analyzes revenue targets vs. actuals, monthly and fiscal year trends, and customer segment performance.",
+        name="subagent_sales_perfbarchart",
+        description="Analyzes revenue targets vs. actuals, monthly and fiscal year trends, and customer segment performance using BarGraph visualization.",
         instruction="""You are a specialized AI assistant that provides clear, quantitative summaries of business performance. 
 You query a Cloud SQL PostgreSQL database to analyze revenue targets vs. actuals, monthly and fiscal year trends, and customer segment performance. 
 Your audience includes the CEO, CTO, SVPs, VPs, Account Managers, and Admins.
@@ -114,23 +113,23 @@ Here are the critical tables you can query:
 7. `sales_team_org`: Contains `employee_id`, `employee_name`, `role`, `division`, `segment`, `group_name`, `department`, `email`, `avp`, `vp`, `svp`.
 
 **A2UI Output Rule:**
-When the user asks for charts, breakdowns, or visual comparisons, you MUST use the native A2UI `Chart` component (supports `bar`, `pie`, `doughnut`).
-Example `Chart` component:
-`{"id": "my_chart", "component": "Chart", "type": "bar", "title": "Segment Revenue Comparison", "chartData": [{"label": "Enterprise", "value": 1000000}, {"label": "Mid-Market", "value": 500000}]}`
+When you present data summaries, breakdowns, or visual comparisons, you MUST use the native `BarGraph` component defined in the catalog schema.
+Example `BarGraph` component:
+`{"id": "revenue_bargraph", "component": "BarGraph", "title": "Revenue by Division", "orientation": "vertical", "xAxis": {"label": "Division", "key": "label"}, "yAxis": {"label": "Revenue ($)", "key": "value", "format": "currency"}, "data": [{"label": "Enterprise", "value": 1200000}, {"label": "Mid-Market", "value": 850000}]}`
 
-**Interactivity:** You MUST include interactive UI components (such as `Button`s) below your data charts or cards to allow the user to drill down or analyze further. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`.
+**Interactivity:** You MUST include interactive UI components (such as `Button`s) below your data bar graphs or cards to allow the user to drill down or analyze further. These buttons should trigger an `action` with `event.name` set to `"analyze_sales_performance"`, passing a specific `"query"` in the `context`.
 
-Set the `catalogId` to `"https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json"`.
+Set the `catalogId` to `"https://a2ui.org/catalogs/bargraph/0.9/bargraph_catalog_definition.json"`.
 
-Ensure the `surfaceId` is unique per response by appending a unique identifier (e.g., `sales_analyst_<random_number>`).
+Ensure the `surfaceId` is unique per response by appending a unique identifier (e.g., `sales_bargraph_<random_number>`).
 
 A2UI Output format example:
 <a2ui-json>
 {
   "version": "v0.9",
   "createSurface": {
-    "surfaceId": "sales_analyst_12345",
-    "catalogId": "https://a2ui.org/samples/community/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json"
+    "surfaceId": "sales_bargraph_12345",
+    "catalogId": "https://a2ui.org/catalogs/bargraph/0.9/bargraph_catalog_definition.json"
   }
 }
 </a2ui-json>
@@ -138,7 +137,7 @@ A2UI Output format example:
 {
   "version": "v0.9",
   "updateComponents": {
-    "surfaceId": "sales_analyst_12345",
+    "surfaceId": "sales_bargraph_12345",
     "components": [
       {
         "id": "root",
@@ -148,7 +147,7 @@ A2UI Output format example:
       {
         "id": "content_col",
         "component": "Column",
-        "children": ["title", "sales_chart", "drill_down_btn"]
+        "children": ["title", "revenue_bargraph", "drill_down_btn"]
       },
       {
         "id": "title",
@@ -157,13 +156,22 @@ A2UI Output format example:
         "variant": "h3"
       },
       {
-        "id": "sales_chart",
-        "component": "Chart",
-        "type": "bar",
+        "id": "revenue_bargraph",
+        "component": "BarGraph",
         "title": "Revenue by Division",
-        "chartData": [
-          {"label": "Enterprise", "value": 1000000},
-          {"label": "Commercial", "value": 750000}
+        "orientation": "vertical",
+        "xAxis": {
+          "label": "Division",
+          "key": "label"
+        },
+        "yAxis": {
+          "label": "Revenue ($)",
+          "key": "value",
+          "format": "currency"
+        },
+        "data": [
+          {"label": "Enterprise", "value": 1200000, "color": "#1A73E8"},
+          {"label": "Commercial", "value": 750000, "color": "#34A853"}
         ]
       },
       {
@@ -187,76 +195,84 @@ A2UI Output format example:
     ]
   }
 }
-</a2ui-json>""",
-        model=Gemini(model=lite_llm_model.replace("vertex_ai/", "").replace("gemini/", "")),
+</a2ui-json>
+""",
         tools=[execute_readonly_sql],
     )
 
+    base_url = f"http://{host}:{port}"
     runner = Runner(
-        app_name=agent.name,
         agent=agent,
         artifact_service=InMemoryArtifactService(),
         session_service=InMemorySessionService(),
         memory_service=InMemoryMemoryService(),
     )
 
-    extensions = [
-        get_a2ui_agent_extension(VERSION_0_8, False, []),
-        get_a2ui_agent_extension(VERSION_0_9, False, []),
+    config = A2aAgentExecutorConfig(
+        runner=runner,
+        event_converter=convert_event_to_a2a_events,
+        lite_llm_model=lite_llm_model,
+        a2ui_converter=a2ui_converter,
+    )
+
+    agent_executor = A2aAgentExecutor(config=config)
+
+    capabilities = AgentCapabilities(
+        streaming=False,
+        push=False,
+        history=True,
+    )
+
+    skills = [
+        AgentSkill(
+            id="sales_performance_barchart_analysis",
+            name="Sales Performance BarGraph Analysis",
+            description="Analyzes revenue targets vs actuals, monthly trends, and segment performance, presenting results as interactive BarGraph components.",
+            tags=["sales", "revenue", "barchart", "performance"],
+            examples=[
+                "Show me the sales performance for Q3 2026",
+                "What is the revenue target vs actual by division?",
+                "Which customer segments generate the most revenue?"
+            ],
+        )
     ]
 
     agent_card = AgentCard(
-        name="Sales Performance Analyst",
-        description="Analyzes revenue targets vs. actuals, monthly and fiscal year trends, and customer segment performance.",
-        url=f"http://{host}:{port}",
+        name="subagent_sales_perfbarchart",
+        description="Analyzes revenue targets vs. actuals, monthly trends, and segment performance using BarGraph visuals.",
+        url=base_url,
         version="1.0.0",
+        capabilities=capabilities,
+        skills=skills,
         default_input_modes=["text"],
         default_output_modes=["text"],
-        capabilities=AgentCapabilities(streaming=True, extensions=extensions),
-        skills=[
-            AgentSkill(
-                id="analyze_sales_performance",
-                name="analyze_sales_performance",
-                description="Analyze revenue targets vs. actuals, monthly trends, and customer segments",
-                examples=["How did actual revenue compare to targets for Q3?", "What are the top 5 performing customer segments this year?", "Show me the monthly revenue trend"],
-                tags=["sales", "performance", "revenue", "analytics"],
-            ),
-            AgentSkill(
-                id="view_sales_by_category",
-                name="View Sales by Category",
-                description="Displays a bar chart of sales broken down by product category or segment for a given time period.",
-                tags=["sales", "breakdown", "category", "bar chart", "revenue"],
-                examples=[
-                    "show my sales breakdown by product category for q3",
-                    "What's the sales breakdown for last month?",
-                ],
-            )
+    )
+
+    a2ui_extension = get_a2ui_agent_extension(
+        agent_card=agent_card,
+        supported_catalog_ids=[
+            "https://a2ui.org/catalogs/bargraph/0.9/bargraph_catalog_definition.json"
         ],
     )
 
-    executor_config = A2aAgentExecutorConfig(
-        gen_ai_part_converter=a2ui_converter.convert,
-        event_converter=lambda e, ic, tid=None, cid=None, pcf=None: convert_event_to_a2a_events(
-            e, ic, tid, cid, a2ui_converter.convert
-        )
-    )
-    executor = A2aAgentExecutor(runner=runner, config=executor_config)
     request_handler = DefaultRequestHandler(
-        agent_executor=executor,
+        agent_executor=agent_executor,
         task_store=InMemoryTaskStore(),
     )
 
     server = A2AStarletteApplication(
-        agent_card=agent_card, http_handler=request_handler
+        agent_card=agent_card,
+        http_handler=request_handler,
+        agent_extensions=[a2ui_extension],
     )
 
     app = server.build()
 
     from starlette.responses import FileResponse
-    async def serve_custom_catalog(request):
-        catalog_path = os.path.join(os.path.dirname(__file__), "custom_catalog_definition.json")
+    async def serve_bargraph_catalog(request):
+        catalog_path = os.path.join(os.path.dirname(__file__), "bargraph_catalog_definition.json")
         return FileResponse(catalog_path, media_type="application/json")
-    app.add_route("/custom_catalog_definition.json", serve_custom_catalog)
+    app.add_route("/bargraph_catalog_definition.json", serve_bargraph_catalog)
 
     app.add_middleware(
         CORSMiddleware,
@@ -266,6 +282,8 @@ A2UI Output format example:
         allow_headers=["*"],
     )
 
+    logger = logging.getLogger("subagent_sales_perfbarchart")
+    logger.info(f"Starting subagent_sales_perfbarchart on {host}:{port}")
     uvicorn.run(app, host=host, port=port)
 
 

@@ -3,7 +3,7 @@ uv run --no-sync subagent_front_desk.py --port=10011 &
 uv run --no-sync subagent_housekeeping.py --port=10012 &
 uv run --no-sync subagent_maintenance.py --port=10013 &
 uv run --no-sync subagent_room_service.py --port=10014 &
-uv run --no-sync subagent_sales_performance_analyst.py --port=10015 &
+uv run --no-sync subagent_sales_perfbarchart.py --port=10015 &
 
 for port in 10011 10012 10013 10014 10015; do
   echo "Waiting for subagent on port $port..."
