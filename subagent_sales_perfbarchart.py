@@ -254,7 +254,7 @@ Here is the sales performance report:
         get_a2ui_agent_extension(
             VERSION_0_9,
             False,
-            [my_catalog]
+            [my_catalog.catalog_id]
         ),
     ]
 
