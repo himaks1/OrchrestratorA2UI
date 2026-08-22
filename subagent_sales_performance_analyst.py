@@ -191,9 +191,9 @@ def main(host, port):
     extensions = [
         get_a2ui_agent_extension(VERSION_0_8, False, []),
         get_a2ui_agent_extension(
-            VERSION_0_9,
-            False,
-            [my_catalog.catalog_id]
+            VERSION_0_9, 
+            False, 
+            [my_catalog.catalog_id, sales_chart_catalog.catalog_id] # Added your charts catalog ID here!
         ),
     ]
 
