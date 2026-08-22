@@ -75,6 +75,32 @@ my_catalog = inference_format.get_selected_catalog()
 a2ui_converter = A2uiPartConverter(a2ui_catalog=my_catalog, version=VERSION_0_9)
 
 load_dotenv()
+
+# --- START: A2UI Schema Manager for Charting ---
+from a2ui.schema.manager import A2uiSchemaManager, CatalogConfig
+from pathlib import Path
+
+# Establish the workspace base directory
+BASE_DIR = Path(__file__).resolve().parent.parent # Use .parent.parent to go up from subagent folder to root orchestrator folder
+
+# Reference your specific sales/chart catalog config
+sales_chart_catalog = CatalogConfig.from_path(
+    name="sales_charts",
+    catalog_path=str(BASE_DIR / "examples" / "custom_catalog" / "0.9" / "chart.json")
+)
+
+# Compile the schema manager for this Sub-agent
+# This manager will now understand Column, MaterialTable, AND VegaChart
+sales_schema_manager = A2uiSchemaManager(
+    version=VERSION_0_9,
+    catalogs=[
+        BasicCatalog.get_config(version=VERSION_0_9),
+        MaterialCatalog.get_config(version=VERSION_0_9),
+        sales_chart_catalog
+    ]
+)
+# --- END: A2UI Schema Manager for Charting ---
+
 logging.basicConfig(level=logging.INFO)
 
 
