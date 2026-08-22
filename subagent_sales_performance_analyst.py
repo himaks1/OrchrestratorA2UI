@@ -149,12 +149,75 @@ def execute_readonly_sql(query: str) -> str:
 
 # 1. First, define the instruction generator right before the agent definition.
 # This dynamically teaches the LLM the exact structure of all components.
+
+charting_example = """
+USER_QUERY:
+"Compare the monthly sales actuals versus quota target as a bar chart."
+
+LLM_RESPONSE:
+Here is a comparison of the monthly sales actuals versus quota target.
+
+<a2ui-json>
+{
+  "version": "v0.9",
+  "createSurface": {
+    "surfaceId": "sales_comparison_chart_123",
+    "catalogId": "https://a2ui.org/catalogs/custom/0.9/custom_catalog_definition.json"
+  }
+}
+</a2ui-json>
+<a2ui-json>
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "sales_comparison_chart_123",
+    "components": [
+      {
+        "id": "root",
+        "component": "Column",
+        "children": [
+          {
+            "component": "VegaChart",
+            "spec": {
+              "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+              "description": "Monthly Sales vs Quota",
+              "width": "container",
+              "height": 250,
+              "data": {
+                "values": [
+                  {"Month": "Jan", "Type": "Actual", "Revenue": 150000},
+                  {"Month": "Jan", "Type": "Quota", "Revenue": 120000},
+                  {"Month": "Feb", "Type": "Actual", "Revenue": 170000},
+                  {"Month": "Feb", "Type": "Quota", "Revenue": 130000}
+                ]
+              },
+              "mark": "bar",
+              "encoding": {
+                "x": {"field": "Month", "type": "nominal", "axis": {"title": "Month"}},
+                "y": {"field": "Revenue", "type": "quantitative", "axis": {"title": "Revenue ($)"}},
+                "xOffset": {"field": "Type", "type": "nominal"},
+                "color": {"field": "Type", "type": "nominal"}
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+</a2ui-json>
+"""
+
 sales_analyst_instruction = sales_schema_manager.generate_system_prompt(
     role_description="You are a specialized Sales Performance Analyst Sub-Agent.",
     ui_description="""To present tabular data like lists of top performers or detailed revenue breakdowns, use the `MaterialTable` component. To visualize trends, comparisons, or performance over time (e.g., actuals vs. quota), you MUST use the `VegaChart` component, which should be placed inside a `Column` layout.""",
     include_schema=True,
     include_examples=True # The manager will auto-generate examples.
 )
+# NOTE: The current SDK version does not support `few_shot_examples` as an argument to generate_system_prompt.
+# We append the custom example directly to the string instead.
+sales_analyst_instruction += "\n\n### Custom Few-Shot Examples:\n" + charting_example
+
 
 
 # 2. Now, update the LlmAgent to use this new dynamic instruction.
