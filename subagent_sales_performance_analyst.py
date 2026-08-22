@@ -81,8 +81,7 @@ from a2ui.schema.manager import A2uiSchemaManager, CatalogConfig
 from pathlib import Path
 
 # Establish the workspace base directory
-BASE_DIR = Path(__file__).resolve().parent.parent # Use .parent.parent to go up from subagent folder to root orchestrator folder
-
+BASE_DIR = Path(__file__).resolve().parent # Use .parent to get the orchestrator directory
 # Reference your specific sales/chart catalog config
 sales_chart_catalog = CatalogConfig.from_path(
     name="sales_charts",
@@ -193,7 +192,7 @@ def main(host, port):
         get_a2ui_agent_extension(
             VERSION_0_9, 
             False, 
-            [my_catalog.catalog_id, sales_chart_catalog.catalog_id] # Added your charts catalog ID here!
+            [my_catalog.catalog_id, "https://a2ui.org/catalogs/custom/0.9/custom_catalog_definition.json"] # Added your charts catalog ID here!
         ),
     ]
 
